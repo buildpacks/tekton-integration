@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strconv"
 	"testing"
 	"text/template"
 	"time"
@@ -27,15 +27,15 @@ import (
 )
 
 func TestIntegration(t *testing.T) {
-	gomega.RegisterTestingT(t)
 	spec.Run(t, "integration", testIntegration, spec.Report(report.Terminal{}))
 }
 
 const (
-	clusterName       = "integration-test-cluster"
-	registryName      = "integration-test-registry"
-	defaultTaskConfig = "https://raw.githubusercontent.com/tektoncd/catalog/master/buildpacks/buildpacks-v3.yaml"
-	outputRepoName    = "integration-test/app"
+	clusterName           = "integration-test-cluster"
+	registryContainerName = "integration-test-registry"
+	appContainerName      = "integration-test-app"
+	defaultTaskConfig     = "https://raw.githubusercontent.com/tektoncd/catalog/master/buildpacks/buildpacks-v3.yaml"
+	outputRepoName        = "integration-test/app"
 )
 
 func resolveTaskConfig() string {
@@ -48,15 +48,21 @@ func resolveTaskConfig() string {
 }
 
 func testIntegration(t *testing.T, when spec.G, it spec.S) {
+	var g *gomega.WithT
+	it.Before(func() {
+		g = gomega.NewWithT(t)
+	})
+
 	when("tekton is installed", func() {
 		var (
 			kindCtx       *cluster.Context
+			k8sClient     *kubernetes.Clientset
 			registryPort  int
 			tmpDir        string
 			err           error
 			cleanUpDocker = func() {
-				_ = exec.Command("docker", "stop", registryName).Run()
-				_ = exec.Command("docker", "rm", registryName).Run()
+				_ = exec.Command("docker", "rm", "-f", registryContainerName).Run()
+				_ = exec.Command("docker", "rm", "-f", appContainerName).Run()
 				_ = kindCtx.Delete()
 			}
 		)
@@ -70,7 +76,9 @@ func testIntegration(t *testing.T, when spec.G, it spec.S) {
 			cleanUpDocker()
 
 			t.Log("Starting registry...")
-			registryPort, err = startRegistry(registryName)
+			registryPort, err = freePort()
+			output, err := startContainer(registryContainerName, "registry:2", "-p", fmt.Sprintf("%d:5000", registryPort))
+			t.Log(string(bytes.TrimSpace(output)))
 			assertNil(t, "starting registry", err)
 
 			t.Log("Creating k8s cluster...")
@@ -95,7 +103,11 @@ func testIntegration(t *testing.T, when spec.G, it spec.S) {
 			assertNil(t, "installing tekton", err)
 
 			t.Log("Waiting for Tekton pods to be READY...")
-			waitForTekton(t, kubeConfigPath)
+			config, err := clientcmd.BuildConfigFromFlags("", kubeConfigPath)
+			assertNil(t, "creating k8s client-go config", err)
+			k8sClient, err = kubernetes.NewForConfig(config)
+			assertNil(t, "creating k8s client-go clientset", err)
+			waitForTekton(t, g, k8sClient)
 		})
 
 		it.After(func() {
@@ -131,7 +143,6 @@ To list TaskRuns run: kubectl get taskruns
 
 		it("should install and build app", func() {
 			t.Log("===> INSTALL")
-
 			taskConfig := resolveTaskConfig()
 			t.Logf("Installing 'buildpacks' TaskRun from: %s", taskConfig)
 			output, err := exec.Command("kubectl", "create", "-f", taskConfig, ).CombinedOutput()
@@ -139,7 +150,6 @@ To list TaskRuns run: kubectl get taskruns
 			assertNil(t, "installing buildpacks task", err)
 
 			t.Log("===> BUILD APP")
-
 			t.Log("Finalizing build.yml...")
 			ipAddress, err := resolveIPAddress()
 			assertNil(t, "resolving IP address", err)
@@ -158,9 +168,28 @@ To list TaskRuns run: kubectl get taskruns
 			t.Log(string(bytes.TrimSpace(output)))
 			assertNil(t, "creating build on k8s", err)
 
-			t.Log("===> RUNNING APP")
+			t.Log("Waiting for taskrun to complete...")
+			waitForTaskRun(t, g, k8sClient)
 
-			t.Log("TODO!!!")
+			t.Log("===> RUN APP")
+			appPort, err := freePort()
+			assertNil(t, "getting a free port", err)
+
+			imageName := fmt.Sprintf("localhost:%d/%s", registryPort, outputRepoName)
+			t.Logf("Running app '%s' on port %d", imageName, appPort)
+
+			output, err = startContainer(appContainerName, imageName, "-p", fmt.Sprintf("%d:8080", appPort))
+			t.Log(string(bytes.TrimSpace(output)))
+			assertNil(t, "starting app", err)
+
+			t.Logf("Checking app...")
+			g.Eventually(func() int {
+				resp, err := http.Get(fmt.Sprintf("http://localhost:%d", appPort))
+				if err != nil {
+					return 0
+				}
+				return resp.StatusCode
+			}, 20*time.Second).Should(gomega.Equal(200))
 		})
 	})
 }
@@ -172,24 +201,16 @@ func assertNil(t *testing.T, msg string, err error) {
 	}
 }
 
-func waitForTekton(t *testing.T, kubeConfigPath string) {
-	config, err := clientcmd.BuildConfigFromFlags("", kubeConfigPath)
-	assertNil(t, "creating k8s client-go config", err)
-
-	clientset, err := kubernetes.NewForConfig(config)
-	assertNil(t, "creating k8s client-go clientset", err)
-
+func waitForTekton(t *testing.T, g *gomega.WithT, clientset *kubernetes.Clientset) {
 	podsClient := clientset.CoreV1().Pods("tekton-pipelines")
-	gomega.Eventually(func() bool {
+	g.Eventually(func() bool {
 		podsList, err := podsClient.List(v1.ListOptions{})
 		assertNil(t, "listing pods", err)
 
 		pods := podsList.Items
-
 		if len(pods) < 1 {
 			return false
 		}
-
 		for _, pod := range pods {
 			if pod.Status.Phase != v12.PodRunning {
 				return false
@@ -198,6 +219,26 @@ func waitForTekton(t *testing.T, kubeConfigPath string) {
 
 		return true
 	}, 40*time.Second, 2*time.Second).Should(gomega.BeTrue())
+}
+
+func waitForTaskRun(t *testing.T, g *gomega.WithT, k8sClient *kubernetes.Clientset) {
+	podsClient := k8sClient.CoreV1().Pods("default")
+	g.Eventually(func() bool {
+		podsList, err := podsClient.List(v1.ListOptions{LabelSelector: `tekton.dev/taskRun=test-run`})
+		assertNil(t, "listing pods", err)
+
+		pods := podsList.Items
+		if len(pods) < 1 {
+			return false
+		}
+		for _, pod := range pods {
+			if pod.Status.Phase != v12.PodSucceeded {
+				return false
+			}
+		}
+
+		return true
+	}, 4*time.Minute, 2*time.Second).Should(gomega.BeTrue())
 }
 
 func resolveIPAddress() (string, error) {
@@ -217,18 +258,12 @@ func resolveIPAddress() (string, error) {
 	return "", errors.New("unable to resolve IP address")
 }
 
-func startRegistry(containerName string) (int, error) {
-	port, err := freePort()
-	if err != nil {
-		return 0, errors.Wrap(err, "getting free port")
-	}
+func startContainer(containerName, imageName string, opts ...string) ([]byte, error) {
+	args := []string{"run", "-d", "--rm", "--name", containerName,}
+	args = append(args, opts...)
+	args = append(args, imageName)
 
-	err = exec.Command("docker", "run", "-d", "--rm", "-p", strconv.Itoa(port)+":5000", "--name", containerName, "registry:2").Run()
-	if err != nil {
-		return 0, errors.Wrap(err, "starting registry")
-	}
-
-	return port, nil
+	return exec.Command("docker", args...).CombinedOutput()
 }
 
 func freePort() (int, error) {
