@@ -1,0 +1,9 @@
+dist: xenial
+
+jobs:
+  include:
+    - stage: test
+      os: linux
+      install: 
+        - sudo snap install kubectl --classic
+      script: go test -mod=vendor -v ./integration_test.go
