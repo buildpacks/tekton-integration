@@ -1,4 +1,4 @@
-# tekton-integration
+# tekton-integration [![Travis Build Status](https://travis-ci.org/buildpack/tekton-integration.svg?branch=master)](https://travis-ci.org/buildpack/tekton-integration)
 
 The purpose of this repository is solely to provide the means for testing the integration between [Tekton][tekton] and the [Lifecycle][lifecycle].
 

@@ -7,3 +7,7 @@ jobs:
       install: 
         - sudo snap install kubectl --classic
       script: go test -mod=vendor -v ./integration_test.go
+
+branches:
+  only:
+    - master
