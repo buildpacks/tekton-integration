@@ -34,8 +34,8 @@ const (
 	clusterName           = "integration-test-cluster"
 	registryContainerName = "integration-test-registry"
 	appContainerName      = "integration-test-app"
+	appRepoName           = "integration-test/app"
 	defaultTaskConfig     = "https://raw.githubusercontent.com/tektoncd/catalog/master/buildpacks/buildpacks-v3.yaml"
-	outputRepoName        = "integration-test/app"
 )
 
 func resolveTaskConfig() string {
@@ -63,14 +63,16 @@ func testIntegration(t *testing.T, when spec.G, it spec.S) {
 			cleanUpDocker = func() {
 				_ = exec.Command("docker", "rm", "-f", registryContainerName).Run()
 				_ = exec.Command("docker", "rm", "-f", appContainerName).Run()
-				_ = kindCtx.Delete()
+				if kindCtx != nil {
+					_ = kindCtx.Delete()
+				}
 			}
 		)
 
 		it.Before(func() {
-			t.Log("===> BEFORE")
+			t.Log("===> PREPARE")
 			tmpDir, err = ioutil.TempDir("", "integration-test")
-			assertNil(t, "creating temp dir", err)
+			g.Expect(err).To(gomega.BeNil())
 
 			kindCtx = cluster.NewContext(clusterName)
 			cleanUpDocker()
@@ -79,14 +81,14 @@ func testIntegration(t *testing.T, when spec.G, it spec.S) {
 			registryPort, err = freePort()
 			output, err := startContainer(registryContainerName, "registry:2", "-p", fmt.Sprintf("%d:5000", registryPort))
 			t.Log(string(bytes.TrimSpace(output)))
-			assertNil(t, "starting registry", err)
+			g.Expect(err).To(gomega.BeNil())
 
 			t.Log("Creating k8s cluster...")
 			logrus.SetOutput(ioutil.Discard)
 			err = kindCtx.Create(
 				create.WaitForReady(time.Minute * 1),
 			)
-			assertNil(t, "creating kind context", err)
+			g.Expect(err).To(gomega.BeNil())
 
 			t.Log("Configuring kubectl...")
 			kubeConfigPath := kindCtx.KubeConfigPath()
@@ -94,24 +96,24 @@ func testIntegration(t *testing.T, when spec.G, it spec.S) {
 				t.Fatal("Kube Config path from kind is empty")
 			}
 			err = os.Setenv("KUBECONFIG", kubeConfigPath)
-			assertNil(t, "setting KUBECONFIG", err)
+			g.Expect(err).To(gomega.BeNil())
 
 			t.Log("Installing Tekton...")
 			_, err = exec.Command("kubectl",
 				"apply", "-f", "https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml",
 			).CombinedOutput()
-			assertNil(t, "installing tekton", err)
+			g.Expect(err).To(gomega.BeNil())
 
 			t.Log("Waiting for Tekton pods to be READY...")
 			config, err := clientcmd.BuildConfigFromFlags("", kubeConfigPath)
-			assertNil(t, "creating k8s client-go config", err)
+			g.Expect(err).To(gomega.BeNil())
 			k8sClient, err = kubernetes.NewForConfig(config)
-			assertNil(t, "creating k8s client-go clientset", err)
+			g.Expect(err).To(gomega.BeNil())
 			waitForTekton(t, g, k8sClient)
 		})
 
 		it.After(func() {
-			t.Log("===> AFTER")
+			t.Log("===> CLEAN UP")
 			if os.Getenv("SKIP_CLEANUP") == "true" {
 				t.Logf(`==============
 SKIPPING CLEANUP:
@@ -126,7 +128,7 @@ To list TaskRuns run: kubectl get taskruns
 					kindCtx.Name(),
 					tmpDir,
 					registryPort,
-					outputRepoName,
+					appRepoName,
 					kindCtx.KubeConfigPath(),
 				)
 				return
@@ -147,40 +149,40 @@ To list TaskRuns run: kubectl get taskruns
 			t.Logf("Installing 'buildpacks' TaskRun from: %s", taskConfig)
 			output, err := exec.Command("kubectl", "create", "-f", taskConfig, ).CombinedOutput()
 			t.Log(string(bytes.TrimSpace(output)))
-			assertNil(t, "installing buildpacks task", err)
+			g.Expect(err).To(gomega.BeNil())
 
 			t.Log("===> BUILD APP")
 			t.Log("Finalizing build.yml...")
 			ipAddress, err := resolveIPAddress()
-			assertNil(t, "resolving IP address", err)
+			g.Expect(err).To(gomega.BeNil())
 			templateContents, err := ioutil.ReadFile(filepath.Join("testdata", "taskrun.tmpl.yaml"))
-			assertNil(t, "reading build template file", err)
+			g.Expect(err).To(gomega.BeNil())
 			taskRunFile, err := ioutil.TempFile(tmpDir, "taskrun.*.yml")
-			assertNil(t, "creating build config", err)
+			g.Expect(err).To(gomega.BeNil())
 			err = template.Must(template.New("").Parse(string(templateContents))).Execute(taskRunFile,
 				map[string]string{
-					"ImageName": fmt.Sprintf("%s:%d/%s", ipAddress, registryPort, outputRepoName),
+					"ImageName": fmt.Sprintf("%s:%d/%s", ipAddress, registryPort, appRepoName),
 				})
-			assertNil(t, "writing build config", err)
+			g.Expect(err).To(gomega.BeNil())
 
 			t.Logf("Creating taskrun from: %s", taskRunFile.Name())
 			output, err = exec.Command("kubectl", "create", "-f", taskRunFile.Name(), ).CombinedOutput()
 			t.Log(string(bytes.TrimSpace(output)))
-			assertNil(t, "creating build on k8s", err)
+			g.Expect(err).To(gomega.BeNil())
 
 			t.Log("Waiting for taskrun to complete...")
 			waitForTaskRun(t, g, k8sClient)
 
 			t.Log("===> RUN APP")
 			appPort, err := freePort()
-			assertNil(t, "getting a free port", err)
+			g.Expect(err).To(gomega.BeNil())
 
-			imageName := fmt.Sprintf("localhost:%d/%s", registryPort, outputRepoName)
+			imageName := fmt.Sprintf("localhost:%d/%s", registryPort, appRepoName)
 			t.Logf("Running app '%s' on port %d", imageName, appPort)
 
 			output, err = startContainer(appContainerName, imageName, "-p", fmt.Sprintf("%d:8080", appPort))
 			t.Log(string(bytes.TrimSpace(output)))
-			assertNil(t, "starting app", err)
+			g.Expect(err).To(gomega.BeNil())
 
 			t.Logf("Checking app...")
 			g.Eventually(func() int {
@@ -194,18 +196,11 @@ To list TaskRuns run: kubectl get taskruns
 	})
 }
 
-func assertNil(t *testing.T, msg string, err error) {
-	t.Helper()
-	if err != nil {
-		t.Fatalf("%s: %s", msg, err)
-	}
-}
-
 func waitForTekton(t *testing.T, g *gomega.WithT, clientset *kubernetes.Clientset) {
 	podsClient := clientset.CoreV1().Pods("tekton-pipelines")
 	g.Eventually(func() bool {
 		podsList, err := podsClient.List(v1.ListOptions{})
-		assertNil(t, "listing pods", err)
+		g.Expect(err).To(gomega.BeNil())
 
 		pods := podsList.Items
 		if len(pods) < 1 {
@@ -225,7 +220,7 @@ func waitForTaskRun(t *testing.T, g *gomega.WithT, k8sClient *kubernetes.Clients
 	podsClient := k8sClient.CoreV1().Pods("default")
 	g.Eventually(func() bool {
 		podsList, err := podsClient.List(v1.ListOptions{LabelSelector: `tekton.dev/taskRun=test-run`})
-		assertNil(t, "listing pods", err)
+		g.Expect(err).To(gomega.BeNil())
 
 		pods := podsList.Items
 		if len(pods) < 1 {
