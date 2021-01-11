@@ -2,28 +2,42 @@
 
 The purpose of this repository is solely to provide the means for testing the integration between [Tekton][tekton] and the [Lifecycle][lifecycle].
 
-The Tekton task definition can be found at: https://github.com/tektoncd/catalog/blob/master/buildpacks
+The Tekton task definitions can be found in the Tekton Catalog as...
 
-### Prerequisites
+- [buildpacks](https://github.com/tektoncd/catalog/tree/master/task/buildpacks)
+- [buildpacks-phases](https://github.com/tektoncd/catalog/tree/master/task/buildpacks-phases)
 
-- Docker
-- Git
-- Go
-- Kubectl
+## Running tests
 
-### Running tests
+### Ephemeral Environments
 
-`go test -mod=vendor -v ./integration_test.go`
+Tests may be ran on any of the following platforms via...
 
-#### Configuration
+Running a _full test_ entails setting up an ephemeral environment. This may be done by running the associated Make target:
 
-Use the following environment variables to configure the test.
+| Platform | Make target | Scripts
+|--- |--- |---
+| [GKE][platform-gke] | `test-gke` | [gke](scripts/gke/)
+| [Kind][platform-kind] | `test-kind` | [kind](scripts/kind/)
 
-| Name | Default | Description |
-|---   |---      |---          |
-| SKIP_CLEANUP | false | Skips clean up. Great for troubleshooting.
-| TASK_CONFIG | _[latest in Tekton catalog][tekton-task-config]_ | Task config applied for buildpacks task.  
 
+#### Example
+
+```script
+make test-kind
+```
+
+### Pre-existing Environment
+
+Running tests on a pre-existing environments may be done by choosing the right `kubeclt` context and executing [`scripts/2_run_tests.sh`](scripts/2_run_tests.sh).
+
+#### Helper Scripts
+
+- [`scripts/1_k8s_setup.sh`](scripts/1_k8s_setup.sh) → Install Tekton
+- [`scripts/2_run_tests.sh`](scripts/2_run_tests.sh) → Run tests
+
+
+[platform-kind]: https://kind.sigs.k8s.io/
+[platform-gke]: https://cloud.google.com/kubernetes-engine
 [tekton]: https://tekton.dev/
-[tekton-task-config]: https://raw.githubusercontent.com/tektoncd/catalog/master/buildpacks/buildpacks-v3.yaml
 [lifecycle]: https://buildpacks.io/docs/concepts/components/lifecycle/
