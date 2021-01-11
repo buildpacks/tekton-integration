@@ -34,10 +34,11 @@ Running tests on a pre-existing environments may be done by choosing the right `
 #### Helper Scripts
 
 - [`scripts/1_k8s_setup.sh`](scripts/1_k8s_setup.sh) → Install Tekton
-- [`scripts/2_run_tests.sh`](scripts/2_run_tests.sh) → Run tests
+- [`scripts/2_run_tests.sh`](scripts/2_run_tests.sh) → Run tests of our tasks using the same mechanism provided by the [Catalog][tekton-tests].
 
 
+[lifecycle]: https://buildpacks.io/docs/concepts/components/lifecycle/
 [platform-kind]: https://kind.sigs.k8s.io/
 [platform-gke]: https://cloud.google.com/kubernetes-engine
 [tekton]: https://tekton.dev/
-[lifecycle]: https://buildpacks.io/docs/concepts/components/lifecycle/
+[tekton-tests]: https://github.com/tektoncd/catalog/tree/master/test
