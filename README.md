@@ -27,6 +27,13 @@ Running a _full test_ entails setting up an ephemeral environment. This may be d
 make test-kind
 ```
 
+### Configuration
+
+| Env | Default | Description
+|---  |---      |---
+| `TASKS` | Tasks in [tasks](tasks) directory | Tasks to test. (format: `<taskname:version>;<taskname:version>;...`)
+| `KUBECTL_CMD` | `kubectl` | Command to use instead of `kubectl`.
+
 ### Pre-existing Environment
 
 Running tests on a pre-existing environments may be done by choosing the right `kubeclt` context and executing [`scripts/2_run_tests.sh`](scripts/2_run_tests.sh).

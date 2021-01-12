@@ -1,0 +1,183 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: buildpacks-phases
+  labels:
+    app.kubernetes.io/version: "0.0"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.12.1"
+    tekton.dev/tags: image-build
+    tekton.dev/displayName: "buildpacks-phases"
+spec:
+  description: >-
+    The Buildpacks-Phases task builds source into a container image and pushes it to
+    a registry, using Cloud Native Buildpacks. This command separately calls the aspects of the
+    Cloud Native Buildpacks lifecycle, to provide more granular control over the construction of
+    the image.
+
+    Cloud Native Buildpacks are pluggable, modular tools that transform application source code
+    into OCI images. They replace Dockerfiles in the app development lifecycle, and allow for swift
+    rebasing of images, and give modular control over images through the use of builders, among other
+    benefits. This command uses a builder to construct the image, and pushes it to the registry provided.
+
+  params:
+    - name: BUILDER_IMAGE
+      description: The image on which builds will run (must include lifecycle and compatible buildpacks).
+    - name: CACHE
+      description: The name of the persistent app cache volume.
+      default: empty-dir
+    - name: PLATFORM_DIR
+      description: The name of the platform directory.
+      default: empty-dir
+    - name: USER_ID
+      description: The user ID of the builder image user.
+      default: "1000"
+    - name: GROUP_ID
+      description: The group ID of the builder image user.
+      default: "1000"
+    - name: PROCESS_TYPE
+      description: The default process type to set on the image.
+      default: "web"
+    - name: SOURCE_SUBPATH
+      description: A subpath within the `source` input where the source to build is located.
+      default: ""
+
+  resources:
+    outputs:
+      - name: image
+        type: image
+
+  workspaces:
+    - name: source
+
+  stepTemplate:
+    env:
+      - name: CNB_PLATFORM_API
+        value: "0.3"
+
+  steps:
+    # Ensure the builder's user has read/write permissions for needed directories.
+    - name: prepare
+      image: docker.io/library/alpine:3.12@sha256:d7342993700f8cd7aba8496c2d0e57be0666e80b4c441925fc6f9361fa81d10e #tag: 3.12
+      imagePullPolicy: Always
+      command: ["/bin/sh"]
+      args:
+        - "-c"
+        - >
+          chown -R "$(params.USER_ID):$(params.GROUP_ID)" "/tekton/home" &&
+          chown -R "$(params.USER_ID):$(params.GROUP_ID)" "/layers" &&
+          chown -R "$(params.USER_ID):$(params.GROUP_ID)" "/cache" &&
+          chown -R "$(params.USER_ID):$(params.GROUP_ID)" "$(workspaces.source.path)"
+      volumeMounts:
+        - name: layers-dir
+          mountPath: /layers
+        - name: $(params.CACHE)
+          mountPath: /cache
+      securityContext:
+        privileged: true
+
+    # Copy stack.toml so that it will be accessible to the exporter, since the lifecycle image will not contain it.
+    - name: copy-stack-toml
+      image: $(params.BUILDER_IMAGE)
+      imagePullPolicy: Always
+      command: ["/bin/sh"]
+      args:
+        - "-c"
+        - >
+          cp /cnb/stack.toml /layers/
+      volumeMounts:
+        - name: layers-dir
+          mountPath: /layers
+
+    - name: detect
+      image: $(params.BUILDER_IMAGE)
+      imagePullPolicy: Always
+      command: ["/cnb/lifecycle/detector"]
+      args:
+        - "-app=$(workspaces.source.path)/$(params.SOURCE_SUBPATH)"
+        - "-group=/layers/group.toml"
+        - "-plan=/layers/plan.toml"
+      volumeMounts:
+        - name: layers-dir
+          mountPath: /layers
+        - name: $(params.PLATFORM_DIR)
+          mountPath: /platform
+        - name: empty-dir
+          mountPath: /tekton/home
+
+    - name: analyze
+      image: docker.io/buildpacksio/lifecycle:0.8.1@sha256:261b7f85b4af986b5802eabc14d581d1830b1d9e38379f99740f5bcdd8a75b86 #tag: 0.8.1
+      imagePullPolicy: Always
+      command: ["/cnb/lifecycle/analyzer"]
+      args:
+        - "-layers=/layers"
+        - "-group=/layers/group.toml"
+        - "-cache-dir=/cache"
+        - "-uid=$(params.USER_ID)"
+        - "-gid=$(params.GROUP_ID)"
+        - "$(resources.outputs.image.url)"
+      volumeMounts:
+        - name: $(params.CACHE)
+          mountPath: /cache
+        - name: layers-dir
+          mountPath: /layers
+
+    - name: restore
+      image: docker.io/buildpacksio/lifecycle:0.8.1@sha256:261b7f85b4af986b5802eabc14d581d1830b1d9e38379f99740f5bcdd8a75b86 #tag: 0.8.1
+      imagePullPolicy: Always
+      command: ["/cnb/lifecycle/restorer"]
+      args:
+        - "-group=/layers/group.toml"
+        - "-layers=/layers"
+        - "-cache-dir=/cache"
+        - "-uid=$(params.USER_ID)"
+        - "-gid=$(params.GROUP_ID)"
+      volumeMounts:
+        - name: $(params.CACHE)
+          mountPath: /cache
+        - name: layers-dir
+          mountPath: /layers
+
+    - name: build
+      image: $(params.BUILDER_IMAGE)
+      imagePullPolicy: Always
+      command: ["/cnb/lifecycle/builder"]
+      args:
+        - "-app=$(workspaces.source.path)/$(params.SOURCE_SUBPATH)"
+        - "-layers=/layers"
+        - "-group=/layers/group.toml"
+        - "-plan=/layers/plan.toml"
+      volumeMounts:
+        - name: layers-dir
+          mountPath: /layers
+        - name: $(params.PLATFORM_DIR)
+          mountPath: /platform
+        - name: empty-dir
+          mountPath: /tekton/home
+
+    - name: export
+      image: docker.io/buildpacksio/lifecycle:0.8.1@sha256:261b7f85b4af986b5802eabc14d581d1830b1d9e38379f99740f5bcdd8a75b86 #tag: 0.8.1
+      imagePullPolicy: Always
+      command: ["/cnb/lifecycle/exporter"]
+      args:
+        - "-app=$(workspaces.source.path)/$(params.SOURCE_SUBPATH)"
+        - "-layers=/layers"
+        - "-group=/layers/group.toml"
+        - "-cache-dir=/cache"
+        - "-process-type=$(params.PROCESS_TYPE)"
+        - "-uid=$(params.USER_ID)"
+        - "-gid=$(params.GROUP_ID)"
+        - "-stack=/layers/stack.toml"
+        - "$(resources.outputs.image.url)"
+      volumeMounts:
+        - name: layers-dir
+          mountPath: /layers
+        - name: $(params.CACHE)
+          mountPath: /cache
+
+  volumes:
+    - name: empty-dir
+      emptyDir: {}
+    - name: layers-dir
+      emptyDir: {}
