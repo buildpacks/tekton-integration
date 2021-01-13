@@ -7,6 +7,12 @@ The Tekton task definitions can be found in the Tekton Catalog as...
 - [buildpacks](https://github.com/tektoncd/catalog/tree/master/task/buildpacks)
 - [buildpacks-phases](https://github.com/tektoncd/catalog/tree/master/task/buildpacks-phases)
 
+## Linting
+
+### Dependencies
+
+- [catlin](https://github.com/tektoncd/plumbing/tree/master/catlin)
+
 ## Running tests
 
 ### Configuration
