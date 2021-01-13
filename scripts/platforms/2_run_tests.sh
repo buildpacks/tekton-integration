@@ -21,7 +21,7 @@ fi
 
 # TASK
 
-tmp_dir=$(mktemp -d e2e-test-XXXXXXXXXX)
+tmp_dir=$(create_tmpdir e2e-test)
 
 echo "> Downloading catalog..."
 git clone https://github.com/tektoncd/catalog ${tmp_dir}
@@ -40,6 +40,8 @@ pushd ${tmp_dir} > /dev/null
 
         echo "> Running test for '${a}'..."
         ./test/run-test.sh ${parts[0]} ${parts[1]}
+        echo
+        echo
     done
 
 popd > /dev/null

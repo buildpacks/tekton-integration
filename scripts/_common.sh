@@ -26,3 +26,12 @@ function get_tasks_to_test() {
         echo "${tasks[@]}"
     fi
 }
+
+function create_tmpdir() {
+    if [ -z "${1}" ]; then
+        echo "creating a temp dir is missing prefix"
+        exit 4
+    fi
+
+    echo $(mktemp -d "${TMPDIR:-/tmp}/${1}.XXXXXXXXX")
+}

@@ -18,7 +18,7 @@ require_command $DIFFCMD
 
 # TASK
 
-tmp_dir=$(mktemp -d diff-XXXXXXXXXX)
+tmp_dir=$(create_tmpdir diff)
 
 echo "> Downloading catalog..."
 git clone https://github.com/tektoncd/catalog ${tmp_dir}
