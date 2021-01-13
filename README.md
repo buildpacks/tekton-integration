@@ -1,6 +1,6 @@
-# tekton-integration
+# Tekton Integration
 
-The purpose of this repository is solely to provide the means for testing the integration between [Tekton][tekton] and the [Lifecycle][lifecycle].
+The purpose of this repository is solely to provide the means for testing and developing the integration between [Tekton][tekton] and the [Lifecycle][lifecycle].
 
 The Tekton task definitions can be found in the Tekton Catalog as...
 
@@ -9,45 +9,68 @@ The Tekton task definitions can be found in the Tekton Catalog as...
 
 ## Linting
 
-### Dependencies
+#### Dependencies
 
 - [catlin](https://github.com/tektoncd/plumbing/tree/master/catlin)
 
-## Running tests
+#### Usage
 
-### Configuration
+```shell
+make lint
+```
+
+## Testing
+
+#### Configuration
 
 | Env | Default | Description
 |---  |---      |---
-| `TASKS` | Tasks in [tasks](tasks) directory | Tasks to test. (format: `<taskname:version>;<taskname:version>;...`)
-| `KUBECTL_CMD` | `kubectl` | Command to use instead of `kubectl`.
+| `TASKS` | Tasks in [task](task) directory | Tasks to test. (format: `<taskname:version>;<taskname:version>;...`)
+| `KUBECTLCMD` | `kubectl` | Command to use instead of `kubectl`.
 
 Tests may be ran on any of the following platforms via...
 
-### Ephemeral Environments
+#### Ephemeral Environments
 
 Running a _full test_ entails setting up an ephemeral environment. This may be done by running the associated Make target:
 
 | Platform | Make target | Scripts
 |---       |---          |---
-| [GKE][platform-gke] | `test-gke` | [gke](scripts/gke/)
-| [Kind][platform-kind] | `test-kind` | [kind](scripts/kind/)
-| [OpenShift][platform-openshift] | `test-openshift` | [openshift](scripts/openshift/)
+| [GKE][platform-gke] | `test-gke` | [gke](scripts/platforms/gke/)
+| [Kind][platform-kind] | `test-kind` | [kind](scripts/platforms/kind/)
+| [OpenShift][platform-openshift] | `test-openshift` | [openshift](scripts/platforms/openshift/)
 
-#### Example
+##### Example
 
 ```script
 make test-kind
 ```
 
-### Pre-existing Environment
+#### Pre-existing Environment
 
-Running tests on a pre-existing environments may be done by choosing the right `kubeclt` context and executing [`scripts/2_run_tests.sh`](scripts/2_run_tests.sh).
+Running tests on a pre-existing environments may be done by choosing the right `kubeclt` context and executing the following scripts...
 
-#### Helper Scripts
+##### Scripts
 
-- [`scripts/1_k8s_setup.sh`](scripts/1_k8s_setup.sh) → Install Tekton
-- [`scripts/2_run_tests.sh`](scripts/2_run_tests.sh) → Run tests of our tasks using the same mechanism provided by the [Catalog][tekton-tests].
+- [`scripts/platforms/1_k8s_setup.sh`](scripts/platforms/1_k8s_setup.sh) → Install Tekton
+- [`scripts/platforms/2_run_tests.sh`](scripts/platforms/2_run_tests.sh) → Run tests of our tasks using the same mechanism provided by the [Catalog][tekton-tests].
+
+## Diffing
+
+Compare tasks against latest version in Tekton Catalog.
+
+#### Configuration
+
+| Env | Default | Description
+|---  |---      |---
+| `TASKS` | Tasks in [task](task) directory | Tasks to compare. (format: `<taskname:version>;<taskname:version>;...`)
+| `DIFFCMD` | `diff` | Command to use instead of `diff`.
+
+#### Usage
+
+```shell
+make diff
+```
 
 [lifecycle]: https://buildpacks.io/docs/concepts/components/lifecycle/
 [platform-kind]: https://kind.sigs.k8s.io/

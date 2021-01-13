@@ -5,16 +5,12 @@ function require_command() {
     fi
 }
 
-function get_kubectl_cmd() {
-    if [ ! -z "${KUBECTL_CMD}" ]; then
-        echo ${KUBECTL_CMD}
+function env_or_default() {
+    if [ ! -z "${!1}" ]; then
+        echo ${!1}
     else
-        echo kubectl
+        echo ${2}
     fi
-}
-
-function kubectl_cmd() {
-    eval "$(get_kubectl_cmd) ${@:1}"
 }
 
 function get_tasks_to_test() {

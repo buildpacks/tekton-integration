@@ -5,7 +5,7 @@ set -e
 # IMPORTS
 
 DIR="$(dirname "${BASH_SOURCE[0]}")"
-source "${DIR}/../_common.sh"
+source "${DIR}/../../_common.sh"
 source "${DIR}/_common.sh"
 
 # CLEANUP
@@ -28,4 +28,4 @@ ${DIR}/../1_k8s_setup.sh
 
 # TEST
 
-${DIR}/../2_run_tests.sh $(get_tasks_to_test "${DIR}/../../tasks")
+${DIR}/../2_run_tests.sh $(get_tasks_to_test "${DIR}/../../../task")

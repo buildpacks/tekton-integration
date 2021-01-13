@@ -6,11 +6,16 @@ lint:
 	catlin validate task/buildpacks-phases/0.0/buildpacks-phases.yaml
 
 test-kind:
-	./scripts/kind/full_run.sh
+	@./scripts/platforms/kind/full_run.sh
 
 test-gke:
-	./scripts/gke/full_run.sh
+	@./scripts/platforms/gke/full_run.sh
 
-test-openshift: export KUBECTL_CMD=oc
+test-openshift: export KUBECTLCMD=oc
 test-openshift:
-	./scripts/openshift/full_run.sh
+	@./scripts/platforms/openshift/full_run.sh
+
+diff:
+	@./scripts/diff.sh
+
+.PHONY: lint test-kind test-gke test-openshift

@@ -5,7 +5,7 @@ set -e
 # IMPORTS
 
 DIR="$(dirname "${BASH_SOURCE[0]}")"
-source "${DIR}/_common.sh"
+source "${DIR}/../_common.sh"
 
 # DEPENDENCIES
 
@@ -21,13 +21,13 @@ fi
 
 # TASK
 
-tmp_dir=/tmp/test-$(cat /dev/urandom | env LC_CTYPE=C tr -dc 'a-z0-9' | fold -w 10 | head -n 1)
+tmp_dir=$(mktemp -d e2e-test-XXXXXXXXXX)
 
 echo "> Downloading catalog..."
 git clone https://github.com/tektoncd/catalog ${tmp_dir}
 
 echo "> Coping/Overlaying dev tasks..."
-cp -vR ${DIR}/../tasks/ ${tmp_dir}/task/
+cp -vR ${DIR}/../../task/ ${tmp_dir}/task/
 
 pushd ${tmp_dir} > /dev/null
 
@@ -37,6 +37,8 @@ pushd ${tmp_dir} > /dev/null
             echo "Couldn't parse '${a}'. Make sure to provide a version (ie. 'my-task:0.2')"
             exit 2
         fi
+
+        echo "> Running test for '${a}'..."
         ./test/run-test.sh ${parts[0]} ${parts[1]}
     done
 

@@ -5,7 +5,7 @@ set -e
 # IMPORTS
 
 DIR="$(dirname "${BASH_SOURCE[0]}")"
-source "${DIR}/../_common.sh"
+source "${DIR}/../../_common.sh"
 source "${DIR}/_common.sh"
 
 cluster_name=$1
