@@ -16,7 +16,7 @@ require_command terraform
 # INPUTS
 
 if [ "$1" = "" ];then
-    cluster_name="test-$(cat /dev/urandom | env LC_CTYPE=C tr -dc 'a-z0-9' | fold -w 10 | head -n 1)"
+    cluster_name="test-$(openssl rand -hex 12)"
 else
     cluster_name=$1
 fi

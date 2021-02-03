@@ -9,7 +9,7 @@ source "${DIR}/../../_common.sh"
 
 # INPUTS
 
-cluster_name="test-$(cat /dev/urandom | env LC_CTYPE=C tr -dc 'a-z0-9' | fold -w 10 | head -n 1)"
+cluster_name="test-$(openssl rand -hex 12)"
 
 # CLEANUP
 

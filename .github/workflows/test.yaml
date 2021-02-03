@@ -1,3 +1,5 @@
+name: Test
+
 on:
   push:
     branches:
@@ -8,6 +10,7 @@ on:
 
 jobs:
   lint:
+    name: Lint
     runs-on: ubuntu-18.04
     steps:
       - name: Checkout
@@ -32,6 +35,7 @@ jobs:
           cd source
           make lint
   test-kind:
+    name: Kind
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
