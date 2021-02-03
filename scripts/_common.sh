@@ -19,7 +19,7 @@ function get_tasks_to_test() {
         echo "${parts[@]}"
     else
         tasks=()
-        for t in $(find ${1} -depth 2 -type d); do
+        for t in $(find ${1} -mindepth 2 -maxdepth 2 -type d); do
             parts=(${t//\// })
             tasks+=("${parts[-2]}:${parts[-1]}")
         done
