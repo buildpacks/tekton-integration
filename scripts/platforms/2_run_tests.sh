@@ -27,7 +27,7 @@ echo "> Downloading catalog..."
 git clone https://github.com/tektoncd/catalog ${tmp_dir}
 
 echo "> Coping/Overlaying dev tasks..."
-cp -vR ${DIR}/../../task/ ${tmp_dir}/task/
+cp -vR ${DIR}/../../task/* ${tmp_dir}/task/
 
 pushd ${tmp_dir} > /dev/null
 
