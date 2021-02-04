@@ -64,7 +64,7 @@ Compare tasks against latest version in Tekton Catalog.
 | Env | Default | Description
 |---  |---      |---
 | `TASKS` | Tasks in [task](task) directory | Tasks to compare. (format: `<taskname:version>;<taskname:version>;...`)
-| `DIFFCMD` | `diff` | Command to use instead of `diff`.
+| `DIFFCMD` | `git diff --no-index` | Command to use for diff'ing task contents.
 
 #### Usage
 

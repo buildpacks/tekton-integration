@@ -9,7 +9,7 @@ source "${DIR}/_common.sh"
 
 # CONFIGURATION
 
-DIFFCMD=$(env_or_default DIFFCMD diff)
+DIFFCMD=$(env_or_default DIFFCMD "git diff --no-index")
 
 # DEPENDENCIES
 
@@ -35,8 +35,8 @@ for a in $tasks; do
 
     new_task_dir="${task_dir}/${parts[0]}/${parts[1]}"
     echo "> Diffing task '${parts[0]}/${parts[1]}'..."
-    old_task_dir=$(find "${tmp_dir}/task/${parts[0]}" -depth 1 -type d | tail -1)
-    $DIFFCMD "${new_task_dir}" "${old_task_dir}" || true
+    old_task_dir=$(find "${tmp_dir}/task/${parts[0]}" -maxdepth 1 -type d | sort | tail -1)
+    $DIFFCMD "${old_task_dir}" "${new_task_dir}" || true
     echo
     echo
 done

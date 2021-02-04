@@ -1,27 +1,30 @@
 # Cloud Native Buildpacks
 
-This build template builds source into a container image using [Cloud Native
-Buildpacks](https://buildpacks.io). To do that, it uses [builders](https://buildpacks.io/docs/concepts/components/builder/#what-is-a-builder) to run buildpacks against your application.
+This build template builds source into a container image using [Cloud Native Buildpacks](https://buildpacks.io). To do that, it uses [builders](https://buildpacks.io/docs/concepts/components/builder/#what-is-a-builder) to run buildpacks against your application.
 
 Cloud Native Buildpacks are pluggable, modular tools that transform application source code into OCI images. They replace Dockerfiles in the app development lifecycle, and enable for swift rebasing of images and modular control over images (through the use of builders), among other benefits. This command uses a builder to construct the image, and pushes it to the registry provided.
 
-The lifecycle phases are run in separate containers to enable better security for untrusted builders. Specifically, registry credentials are hidden from the detect and build phases of the lifecycle, and the analyze, restore, and export phases (which require credentials) are run in the lifecycle image published by the [Cloud Native Buildpacks project]( https://hub.docker.com/u/buildpacksio).
+See also [`buildpacks-phases`](../buildpacks-phases) for the deconstructed version of this task, which runs each of the [lifecycle phases](https://buildpacks.io/docs/concepts/components/lifecycle/#phases) individually (this task uses the [creator binary](https://github.com/buildpacks/spec/blob/platform/0.3/platform.md#operations), which coordinates and runs all of the phases).
 
-See also [`buildpacks`](../buildpacks) for the combined version of this task, which uses the [creator binary](https://github.com/buildpacks/spec/blob/platform/0.3/platform.md#operations), to run all of the [lifecycle phases](https://buildpacks.io/docs/concepts/components/lifecycle/#phases). This task, in contrast, runs all of the phases separately.
+## Compatibility
+
+- **Tekton** v0.11.0 and above
+- **[Platform API][platform-api]**  0.3
+    - For other versions, see [previous versions](#previous-versions).
 
 ## Install the Task
 
 ```
-kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildpacks-phases/0.2/buildpacks-phases.yaml
+kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildpacks/0.3/buildpacks.yaml
 ```
-
-> **NOTE:** This task is currently only compatible with Tekton **v0.11.0** and above, and CNB Platform API 0.3 (lifecycle v0.7.0 and above). For previous Platform API versions, [see below](#previous-versions).
 
 ## Parameters
 
 * **`BUILDER_IMAGE`**: The image on which builds will run. (must include lifecycle and compatible buildpacks; _required_)
 
 * **`CACHE`**: The name of the persistent app cache volume. (_default:_ an empty directory -- effectively no cache)
+
+* **`CACHE_IMAGE`**: The name of the persistent app cache image. (_default:_ no cache image)
 
 * **`PLATFORM_DIR`**: A directory containing platform provided configuration, such as environment variables.
   Files of the format `/platform/env/MY_VAR` with content `my-value` will be translated by the lifecycle into environment variables provided to buildpacks. For more information, see the [buildpacks spec](https://github.com/buildpacks/spec/blob/master/buildpack.md#provided-by-the-platform). (_default:_ an empty directory)
@@ -31,6 +34,10 @@ kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/master/task/
 * **`GROUP_ID`**: The group ID of the builder image user, as a string value. (_default:_ `"1000"`)
 
 * **`PROCESS_TYPE`**: The default process type to set on the image. (_default:_ `"web"`)
+
+* **`SKIP_RESTORE`**: Do not write layer metadata or restore cached layers. (clear cache between each run) (_default:_ `"false"`)
+
+* **`RUN_IMAGE`**: Reference to a run image to use. (_default:_ run image of the builder)
 
 * **`SOURCE_SUBPATH`**: A subpath within the `source` input where the source to build is located. (_default:_ `""`)
 
@@ -47,14 +54,14 @@ The `source` workspace holds the source to build. See `SOURCE_SUBPATH` above if 
 
 This `TaskRun` will use the `buildpacks` task to build the source code, then publish a container image.
 
-```yaml
+```
 apiVersion: tekton.dev/v1beta1
 kind: TaskRun
 metadata:
   name: example-run
 spec:
   taskRef:
-    name: buildpacks-phases
+    name: buildpacks
   podTemplate:
     volumes:
 # Uncomment the lines below to use an existing cache
@@ -105,10 +112,13 @@ Google:
 
 ## Previous Versions
 
-Use one of the following commands to install a previous version of this task. Be sure to also supply a compatible builder image (`BUILDER_IMAGE` input) when running the task (i.e. one that has a lifecycle implementing the expected platform API).
+For support of previous [Platform API][platform-api]s use a previous version of this task.
 
-| Version        | Platform API
+> Be sure to also supply a compatible builder image (`BUILDER_IMAGE` input) when running the task (i.e. one that has a lifecycle that supports the platform API).
+
+| Version        | Platform APIs
 |----            |-----
-| [0.1](../0.1/) | [0.3][platform-api-0.3]
+| [0.2](../0.2/) | [0.3][platform-api-0.3]
 
+[platform-api]: https://buildpacks.io/docs/reference/spec/platform-api/
 [platform-api-0.3]: https://github.com/buildpacks/spec/blob/platform/0.3/platform.md
