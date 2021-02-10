@@ -1,0 +1,127 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: buildpacks
+spec:
+  workspaces:
+    - name: shared-ws
+      description: Shared workspace
+    # - name: cache-ws
+    #   description: Location where when cache is stored if CACHE_IMAGE is not provided.
+    #   optional: true
+  resources:
+    - name: app-image
+      type: image
+    - name: source-git
+      type: git
+  params:
+    - name: TRUST_BUILDER
+      description: Whether the builder image is trusted. When false, each build phase is executed in isolation and credentials are only shared with trusted images.
+      default: "false"
+    - name: BUILDER_IMAGE
+      description: The image on which builds will run (must include lifecycle and compatible buildpacks).
+    # - name: CACHE
+    #   description: The name of the persistent app cache volume.
+    #   default: empty-dir
+    # - name: CACHE_IMAGE # TODO: Missing from buildpack-phases
+    #   description: The name of the persistent app cache image.
+    #   default: ""
+    # - name: PLATFORM_DIR
+    #   description: The name of the platform directory.
+    #   default: empty-dir
+    - name: USER_ID
+      description: The user ID of the builder image user.
+      default: "1000"
+    - name: GROUP_ID
+      description: The group ID of the builder image user.
+      default: "1000"
+    - name: PROCESS_TYPE
+      description: The default process type to set on the image.
+      default: "web"
+    - name: SOURCE_SUBPATH
+      description: A subpath within the `source` where the source to build is located.
+      default: ""
+    # - name: SKIP_RESTORE # TODO: Missing from buildpack-phases
+    #   description: Do not write layer metadata or restore cached layers
+    #   default: "false"
+    # - name: RUN_IMAGE # TODO: Missing from buildpack-phases
+    #   description: Reference to a run image to use.
+    #   default: ""
+  tasks:
+    - name: copy-source-to-shared-ws
+      taskSpec:
+        workspaces:
+          - name: workspace
+        resources:
+          inputs:
+            - name: source-git
+              type: git
+        steps:
+          - name: clone-app-repo-to-workspace
+            image: ubuntu
+            script: cp -avr $(resources.inputs.source-git.path)/. $(workspaces.workspace.path)
+      workspaces:
+        - name: workspace
+          workspace: shared-ws
+          subPath: src
+      resources:
+        inputs:
+          - name: source-git
+            resource: source-git
+    - name: build-trusted
+      runAfter:
+        - copy-source-to-shared-ws
+      taskRef:
+        name: buildpacks
+      when:
+        - input: "$(params.TRUST_BUILDER)"
+          operator: in
+          values: [ "true", "yes", "TRUE", "True" ]
+      workspaces:
+        - name: source
+          workspace: shared-ws
+          subPath: src
+      resources:
+        outputs:
+          - name: image
+            resource: app-image
+      params:
+        - name: BUILDER_IMAGE
+          value: "$(params.BUILDER_IMAGE)"
+        - name: USER_ID
+          value: "$(params.USER_ID)"
+        - name: GROUP_ID
+          value: "$(params.GROUP_ID)"
+        - name: PROCESS_TYPE
+          value: "$(params.PROCESS_TYPE)"
+        - name: SOURCE_SUBPATH
+          value: "$(params.SOURCE_SUBPATH)"
+    - name: build-untrusted
+      runAfter:
+        - copy-source-to-shared-ws
+      taskRef:
+        name: buildpacks-phases
+      when:
+        - input: "$(params.TRUST_BUILDER)"
+          operator: notin
+          values: [ "true", "yes", "TRUE", "True" ]
+      workspaces:
+        - name: source
+          workspace: shared-ws
+          subPath: src
+      resources:
+        outputs:
+          - name: image
+            resource: app-image
+      params:
+        - name: BUILDER_IMAGE
+          value: "$(params.BUILDER_IMAGE)"
+        - name: USER_ID
+          value: "$(params.USER_ID)"
+        - name: GROUP_ID
+          value: "$(params.GROUP_ID)"
+        - name: PROCESS_TYPE
+          value: "$(params.PROCESS_TYPE)"
+        - name: SOURCE_SUBPATH
+          value: "$(params.SOURCE_SUBPATH)"
+---

@@ -8,13 +8,12 @@ metadata:
   annotations:
     tekton.dev/pipelines.minVersion: "0.12.1"
     tekton.dev/tags: image-build
-    tekton.dev/displayName: "buildpacks-phases"
+    tekton.dev/displayName: "Buildpacks (phases)"
 spec:
   description: >-
     The Buildpacks-Phases task builds source into a container image and pushes it to
-    a registry, using Cloud Native Buildpacks. This command separately calls the aspects of the
-    Cloud Native Buildpacks lifecycle, to provide more granular control over the construction of
-    the image.
+    a registry, using Cloud Native Buildpacks. This task separately calls the aspects of the
+    Cloud Native Buildpacks lifecycle, to provide increased security via container isolation.
 
     Cloud Native Buildpacks are pluggable, modular tools that transform application source code
     into OCI images. They replace Dockerfiles in the app development lifecycle, and allow for swift

@@ -68,3 +68,29 @@ make diff
 [platform-gke]: https://cloud.google.com/kubernetes-engine
 [platform-openshift]: https://www.openshift.com/products/container-platform
 [tekton-tests]: https://github.com/tektoncd/catalog/tree/master/test
+
+## Docker Registry
+
+Setting up a docker registry simplifies testing by not having to provide authentication to the tekton pipeline.
+
+The following solution starts a local docker registry but routes it publically via ngrok so that communication can occur using https without having to deal with certificates.
+
+##### Dependencies
+
+- docker
+- ngrok
+
+##### Steps
+
+1. Start docker registry
+    ```shell
+    docker run --rm -e REGISTRY_STORAGE_DELETE_ENABLED=true -d -p 5000:5000 registry:2
+    ```
+2. Forward port via ngrok
+    ```
+    ngrok http 5000
+    ```
+3. Reference images using the domain provided by ngrok (ie. `aebbf67b0993.ngrok.io`)
+    ```
+    aebbf67b0993.ngrok.io/myorg/myapp
+    ```

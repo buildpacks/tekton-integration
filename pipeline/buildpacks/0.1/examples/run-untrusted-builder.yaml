@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: untrusted-builder-shared-ws-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Mi
+---
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: untrusted-builder-pipelinerun
+spec:
+  pipelineRef:
+    name: buildpacks
+  params:
+    - name: TRUST_BUILDER
+      value: "false"
+    - name: BUILDER_IMAGE
+      value: cnbs/sample-builder:alpine@sha256:329dd975bed06758c891d29014b98a3baaf381afb36d7375c3140bfbbb94fb08
+    - name: SOURCE_SUBPATH
+      value: apps/java-maven
+  workspaces:
+  - name: shared-ws
+    persistentVolumeClaim:
+      claimName: untrusted-builder-shared-ws-pvc
+  resources:
+  - name: app-image
+    resourceSpec:
+      type: image
+      params:
+        - name: url
+          value: <IMAGE_NAME>
+  - name: source-git
+    resourceSpec:
+      type: git
+      params:
+        - name: url
+          value: https://github.com/buildpacks/samples
+---

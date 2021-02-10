@@ -44,10 +44,10 @@ spec:
       description: A subpath within the `source` input where the source to build is located.
       default: ""
     - name: SKIP_RESTORE
-      description: Do not write layer metadata or restore cached layers
+      description: Do not write layer metadata or restore cached layers.
       default: "false"
     - name: RUN_IMAGE
-      description: Reference to a run image to use
+      description: Reference to a run image to use.
       default: ""
 
   resources:
