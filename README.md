@@ -45,6 +45,17 @@ There are a few examples through out this repo. Most require some bootstraping h
 ./scripts/example-run.sh <path/to/sample.yaml> <image-name>
 ```
 
+Additional options (using `tkn`):
+
+- To rerun a pipeline with the same parameters:
+    ```
+    tkn pipeline start buildpacks --last --showlog
+    ```
+- To rerun a pipeline while overriding last paramters (ie. `TRUST_BUILDER`):
+    ```
+    tkn pipeline start buildpacks --last --showlog  -p TRUST_BUILDER=false
+    ```
+
 ##### Cleanup
 
 ```

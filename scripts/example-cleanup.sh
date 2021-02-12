@@ -25,11 +25,11 @@ require_command kubectl
 
 # TASK
 
-echo "> Applying sample ..."
-kubectl delete -f $SAMPLE_FILE || true
+echo "> Deleting tasks..."
+ls -1 task/buildpacks*/*/*.yaml | xargs -I '{}' sh -c 'echo "--> Deleting {}..."; kubectl delete -f {}' || true
 
-echo "> Installing pipelines..."
+echo "> Deleting pipelines..."
 ls -1 pipeline/buildpacks*/*/*.yaml | xargs -I '{}' sh -c 'echo "--> Deleting {}..."; kubectl delete -f {}' || true
 
-echo "> Installing tasks..."
-ls -1 task/buildpacks*/*/*.yaml | xargs -I '{}' sh -c 'echo "--> Deleting {}..."; kubectl delete -f {}' || true
+echo "> Deleting sample ..."
+kubectl delete -f $SAMPLE_FILE || true

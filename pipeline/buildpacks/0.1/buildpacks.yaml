@@ -4,25 +4,22 @@ metadata:
   name: buildpacks
 spec:
   workspaces:
-    - name: shared-ws
-      description: Shared workspace
-    # - name: cache-ws
-    #   description: Location where when cache is stored if CACHE_IMAGE is not provided.
-    #   optional: true
+    - name: source-ws
+      description: Location where source is stored.
+    - name: cache-ws
+      description: Location where cache is stored if CACHE_IMAGE is not provided.
+      optional: true
   resources:
     - name: app-image
       type: image
     - name: source-git
       type: git
   params:
+    - name: BUILDER_IMAGE
+      description: The image on which builds will run (must include lifecycle and compatible buildpacks).
     - name: TRUST_BUILDER
       description: Whether the builder image is trusted. When false, each build phase is executed in isolation and credentials are only shared with trusted images.
       default: "false"
-    - name: BUILDER_IMAGE
-      description: The image on which builds will run (must include lifecycle and compatible buildpacks).
-    # - name: CACHE
-    #   description: The name of the persistent app cache volume.
-    #   default: empty-dir
     # - name: CACHE_IMAGE # TODO: Missing from buildpack-phases
     #   description: The name of the persistent app cache image.
     #   default: ""
@@ -48,7 +45,7 @@ spec:
     #   description: Reference to a run image to use.
     #   default: ""
   tasks:
-    - name: copy-source-to-shared-ws
+    - name: copy-source-to-source-ws
       taskSpec:
         workspaces:
           - name: workspace
@@ -58,19 +55,26 @@ spec:
               type: git
         steps:
           - name: clone-app-repo-to-workspace
-            image: ubuntu
-            script: cp -avr $(resources.inputs.source-git.path)/. $(workspaces.workspace.path)
+            image: docker.io/library/bash:5.1.4@sha256:b208215a4655538be652b2769d82e576bc4d0a2bb132144c060efc5be8c3f5d6
+            script: |
+              #!/usr/bin/env bash
+              set -e
+              
+              echo "> Installing rsync..."
+              apk add rsync
+
+              echo "> Syncing source to workspace..."
+              rsync -avr --delete $(resources.inputs.source-git.path)/. $(workspaces.workspace.path)
       workspaces:
         - name: workspace
-          workspace: shared-ws
-          subPath: src
+          workspace: source-ws
       resources:
         inputs:
           - name: source-git
             resource: source-git
     - name: build-trusted
       runAfter:
-        - copy-source-to-shared-ws
+        - copy-source-to-source-ws
       taskRef:
         name: buildpacks
       when:
@@ -79,8 +83,9 @@ spec:
           values: [ "true", "yes", "TRUE", "True" ]
       workspaces:
         - name: source
-          workspace: shared-ws
-          subPath: src
+          workspace: source-ws
+        - name: cache
+          workspace: cache-ws
       resources:
         outputs:
           - name: image
@@ -98,7 +103,7 @@ spec:
           value: "$(params.SOURCE_SUBPATH)"
     - name: build-untrusted
       runAfter:
-        - copy-source-to-shared-ws
+        - copy-source-to-source-ws
       taskRef:
         name: buildpacks-phases
       when:
@@ -107,8 +112,9 @@ spec:
           values: [ "true", "yes", "TRUE", "True" ]
       workspaces:
         - name: source
-          workspace: shared-ws
-          subPath: src
+          workspace: source-ws
+        - name: cache
+          workspace: cache-ws
       resources:
         outputs:
           - name: image
