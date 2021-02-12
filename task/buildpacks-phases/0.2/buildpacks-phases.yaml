@@ -108,7 +108,7 @@ spec:
           mountPath: /tekton/home
 
     - name: analyze
-      image: docker.io/buildpacksio/lifecycle:0.8.1@sha256:261b7f85b4af986b5802eabc14d581d1830b1d9e38379f99740f5bcdd8a75b86 #tag: 0.8.1
+      image: docker.io/buildpacksio/lifecycle:0.10.2@sha256:1bf8d3fc41d2fdf0ee4abdad50038ab8902ef58c74f5bcfc432c26767d889ed0
       imagePullPolicy: Always
       command: ["/cnb/lifecycle/analyzer"]
       args:
@@ -123,7 +123,7 @@ spec:
           mountPath: /layers
 
     - name: restore
-      image: docker.io/buildpacksio/lifecycle:0.8.1@sha256:261b7f85b4af986b5802eabc14d581d1830b1d9e38379f99740f5bcdd8a75b86 #tag: 0.8.1
+      image: docker.io/buildpacksio/lifecycle:0.10.2@sha256:1bf8d3fc41d2fdf0ee4abdad50038ab8902ef58c74f5bcfc432c26767d889ed0
       imagePullPolicy: Always
       command: ["/cnb/lifecycle/restorer"]
       args:
@@ -154,7 +154,7 @@ spec:
           mountPath: /tekton/home
 
     - name: export
-      image: docker.io/buildpacksio/lifecycle:0.8.1@sha256:261b7f85b4af986b5802eabc14d581d1830b1d9e38379f99740f5bcdd8a75b86 #tag: 0.8.1
+      image: docker.io/buildpacksio/lifecycle:0.10.2@sha256:1bf8d3fc41d2fdf0ee4abdad50038ab8902ef58c74f5bcfc432c26767d889ed0
       imagePullPolicy: Always
       command: ["/cnb/lifecycle/exporter"]
       args:
