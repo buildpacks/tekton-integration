@@ -10,33 +10,31 @@ spec:
       description: Location where cache is stored if CACHE_IMAGE is not provided.
       optional: true
   resources:
-    - name: app-image
-      type: image
     - name: source-git
       type: git
+    - name: app-image
+      type: image
   params:
     - name: BUILDER_IMAGE
       description: The image on which builds will run (must include lifecycle and compatible buildpacks).
     - name: TRUST_BUILDER
       description: Whether the builder image is trusted. When false, each build phase is executed in isolation and credentials are only shared with trusted images.
       default: "false"
-    # - name: CACHE_IMAGE # TODO: Missing from buildpack-phases
-    #   description: The name of the persistent app cache image.
-    #   default: ""
-    # - name: PLATFORM_DIR
-    #   description: The name of the platform directory.
-    #   default: empty-dir
+    - name: SOURCE_SUBPATH
+      description: A subpath within the `source` where the source to build is located.
+      default: ""
+    - name: PROCESS_TYPE
+      description: The default process type to set on the image.
+      default: "web"
     - name: USER_ID
       description: The user ID of the builder image user.
       default: "1000"
     - name: GROUP_ID
       description: The group ID of the builder image user.
       default: "1000"
-    - name: PROCESS_TYPE
-      description: The default process type to set on the image.
-      default: "web"
-    - name: SOURCE_SUBPATH
-      description: A subpath within the `source` where the source to build is located.
+    # NOTE: CACHE_IMAGE isn't a resource because of issues with optional resource replacements
+    - name: CACHE_IMAGE
+      description: The name of the persistent app cache image.
       default: ""
     # - name: SKIP_RESTORE # TODO: Missing from buildpack-phases
     #   description: Do not write layer metadata or restore cached layers
@@ -65,6 +63,8 @@ spec:
 
               echo "> Syncing source to workspace..."
               rsync -avr --delete $(resources.inputs.source-git.path)/. $(workspaces.workspace.path)
+
+              echo "> Done!"
       workspaces:
         - name: workspace
           workspace: source-ws
@@ -88,19 +88,21 @@ spec:
           workspace: cache-ws
       resources:
         outputs:
-          - name: image
+          - name: app-image
             resource: app-image
       params:
         - name: BUILDER_IMAGE
           value: "$(params.BUILDER_IMAGE)"
+        - name: SOURCE_SUBPATH
+          value: "$(params.SOURCE_SUBPATH)"
+        - name: PROCESS_TYPE
+          value: "$(params.PROCESS_TYPE)"
+        - name: CACHE_IMAGE
+          value: "$(params.CACHE_IMAGE)"
         - name: USER_ID
           value: "$(params.USER_ID)"
         - name: GROUP_ID
           value: "$(params.GROUP_ID)"
-        - name: PROCESS_TYPE
-          value: "$(params.PROCESS_TYPE)"
-        - name: SOURCE_SUBPATH
-          value: "$(params.SOURCE_SUBPATH)"
     - name: build-untrusted
       runAfter:
         - copy-source-to-source-ws
@@ -117,17 +119,19 @@ spec:
           workspace: cache-ws
       resources:
         outputs:
-          - name: image
+          - name: app-image
             resource: app-image
       params:
         - name: BUILDER_IMAGE
           value: "$(params.BUILDER_IMAGE)"
+        - name: SOURCE_SUBPATH
+          value: "$(params.SOURCE_SUBPATH)"
+        - name: PROCESS_TYPE
+          value: "$(params.PROCESS_TYPE)"
+        - name: CACHE_IMAGE
+          value: "$(params.CACHE_IMAGE)"
         - name: USER_ID
           value: "$(params.USER_ID)"
         - name: GROUP_ID
           value: "$(params.GROUP_ID)"
-        - name: PROCESS_TYPE
-          value: "$(params.PROCESS_TYPE)"
-        - name: SOURCE_SUBPATH
-          value: "$(params.SOURCE_SUBPATH)"
 ---

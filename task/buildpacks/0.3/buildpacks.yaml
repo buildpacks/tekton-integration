@@ -22,34 +22,34 @@ spec:
   params:
     - name: BUILDER_IMAGE
       description: The image on which builds will run (must include lifecycle and compatible buildpacks).
+    - name: SOURCE_SUBPATH
+      description: A subpath within the `source` input where the source to build is located.
+      default: ""
+    - name: PROCESS_TYPE
+      description: The default process type to set on the image.
+      default: "web"
+    - name: RUN_IMAGE
+      description: Reference to a run image to use.
+      default: ""
     - name: CACHE_IMAGE
       description: The name of the persistent app cache image (if no cache workspace is provided).
       default: ""
-    - name: PLATFORM_DIR
-      description: The name of the platform directory.
-      default: empty-dir
+    - name: SKIP_RESTORE
+      description: Do not write layer metadata or restore cached layers.
+      default: "false"
     - name: USER_ID
       description: The user ID of the builder image user.
       default: "1000"
     - name: GROUP_ID
       description: The group ID of the builder image user.
       default: "1000"
-    - name: PROCESS_TYPE
-      description: The default process type to set on the image.
-      default: "web"
-    - name: SOURCE_SUBPATH
-      description: A subpath within the `source` input where the source to build is located.
-      default: ""
-    - name: SKIP_RESTORE
-      description: Do not write layer metadata or restore cached layers.
-      default: "false"
-    - name: RUN_IMAGE
-      description: Reference to a run image to use.
-      default: ""
+    - name: PLATFORM_DIR
+      description: The name of the platform directory.
+      default: empty-dir
 
   resources:
     outputs:
-      - name: image
+      - name: app-image
         type: image
 
   workspaces:
@@ -100,9 +100,9 @@ spec:
         - "-platform=/platform"
         - "-process-type=$(params.PROCESS_TYPE)"
         - "-skip-restore=$(params.SKIP_RESTORE)"
-        - "-previous-image=$(resources.outputs.image.url)"
+        - "-previous-image=$(resources.outputs.app-image.url)"
         - "-run-image=$(params.RUN_IMAGE)"
-        - "$(resources.outputs.image.url)"
+        - "$(resources.outputs.app-image.url)"
       volumeMounts:
         - name: layers-dir
           mountPath: /layers
