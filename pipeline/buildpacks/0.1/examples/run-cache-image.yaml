@@ -30,7 +30,8 @@ spec:
       subPath: source
       persistentVolumeClaim:
         claimName: cache-image-ws-pvc
-    - name: cache-ws # FIXME: Pipeline hangs if optional cache workspace is missing
+    # NOTE: Pipeline hangs if optional cache workspace is missing so we provide an empty directory
+    - name: cache-ws
       subPath: cache
       emptyDir: {}
   resources:

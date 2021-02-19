@@ -33,9 +33,6 @@ spec:
     - name: CACHE_IMAGE
       description: The name of the persistent app cache image.
       default: ""
-    # - name: SKIP_RESTORE # TODO: Missing from buildpack-phases
-    #   description: Do not write layer metadata or restore cached layers
-    #   default: "false"
     - name: USER_ID
       description: The user ID of the builder image user.
       default: "1000"
