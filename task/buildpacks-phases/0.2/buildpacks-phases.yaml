@@ -29,9 +29,9 @@ spec:
     - name: PROCESS_TYPE
       description: The default process type to set on the image.
       default: "web"
-    # - name: RUN_IMAGE
-    #   description: Reference to a run image to use.
-    #   default: ""
+    - name: RUN_IMAGE
+      description: Reference to a run image to use.
+      default: ""
     - name: CACHE_IMAGE
       description: The name of the persistent app cache image (if no cache workspace is provided).
       default: ""
@@ -178,6 +178,7 @@ spec:
         - "-uid=$(params.USER_ID)"
         - "-gid=$(params.GROUP_ID)"
         - "-stack=/layers/stack.toml"
+        - "-run-image=$(params.RUN_IMAGE)"
         - "$(resources.outputs.app-image.url)"
       volumeMounts:
         - name: layers-dir
