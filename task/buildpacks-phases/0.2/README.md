@@ -1,9 +1,11 @@
-# Cloud Native Buildpacks
+<!-- NOTE: This file is auto-generated. Do not manually update! -->
+# Buildpacks (phases)
 
-This build template builds source into a container image using [Cloud Native
-Buildpacks](https://buildpacks.io). To do that, it uses [builders](https://buildpacks.io/docs/concepts/components/builder/#what-is-a-builder) to run buildpacks against your application.
+This task builds source into a container image using [Cloud Native Buildpacks](https://buildpacks.io). To do that, it uses [builders](https://buildpacks.io/docs/concepts/components/builder/#what-is-a-builder) to run buildpacks against your application.
 
-Cloud Native Buildpacks are pluggable, modular tools that transform application source code into OCI images. They replace Dockerfiles in the app development lifecycle, and enable for swift rebasing of images and modular control over images (through the use of builders), among other benefits. This command uses a builder to construct the image, and pushes it to the registry provided.
+> _**What are Cloud Native Buildpacks?**_
+> 
+> _Cloud Native Buildpacks are pluggable, modular tools that transform application source code into OCI images. They replace Dockerfiles in the app development lifecycle, and enable for swift rebasing of images and modular control over images (through the use of builders), among other benefits._
 
 The lifecycle phases are run in separate containers to enable better security for untrusted builders. Specifically, registry credentials are hidden from the detect and build phases of the lifecycle, and the analyze, restore, and export phases (which require credentials) are run in the lifecycle image published by the [Cloud Native Buildpacks project]( https://hub.docker.com/u/buildpacksio).
 
@@ -11,101 +13,43 @@ See also [`buildpacks`](../buildpacks) for the combined version of this task, wh
 
 ## Compatibility
 
-- **Tekton** v0.11.0 and above
-- **[Platform API][platform-api]**  0.3
+- **Tekton** v0.12.1 and above
+- **[Platform API][platform-api]** 0.3
     - For other versions, see [previous versions](#previous-versions).
 
-## Install the Task
+## Install
 
 ```
 kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildpacks-phases/0.2/buildpacks-phases.yaml
 ```
 
-## Parameters
-
-* **`BUILDER_IMAGE`**: The image on which builds will run. (must include lifecycle and compatible buildpacks; _required_)
-
-* **`CACHE`**: The name of the persistent app cache volume. (_default:_ an empty directory -- effectively no cache)
-
-* **`PLATFORM_DIR`**: A directory containing platform provided configuration, such as environment variables.
-  Files of the format `/platform/env/MY_VAR` with content `my-value` will be translated by the lifecycle into environment variables provided to buildpacks. For more information, see the [buildpacks spec](https://github.com/buildpacks/spec/blob/master/buildpack.md#provided-by-the-platform). (_default:_ an empty directory)
-
-* **`USER_ID`**: The user ID of the builder image user, as a string value. (_default:_ `"1000"`)
-
-* **`GROUP_ID`**: The group ID of the builder image user, as a string value. (_default:_ `"1000"`)
-
-* **`PROCESS_TYPE`**: The default process type to set on the image. (_default:_ `"web"`)
-
-* **`SOURCE_SUBPATH`**: A subpath within the `source` input where the source to build is located. (_default:_ `""`)
-
-### Outputs
-
-* **`image`**: An `image`-type `PipelineResource` specifying the image that should
-  be built.
-
 ## Workspaces
 
-The `source` workspace holds the source to build. See `SOURCE_SUBPATH` above if source is located within a subpath of this input.
+ - **`source`**: Directory where application source is located. _(REQUIRED)_
+ - **`cache`**: Directory where cache is stored (when no cache image is provided). _(optional)_
 
-## Usage
+## Parameters
 
-This `TaskRun` will use the `buildpacks` task to build the source code, then publish a container image.
+ - **`APP_IMAGE`**: The name of where to store the app image. _(REQUIRED)_
+ - **`BUILDER_IMAGE`**: The image on which builds will run (must include lifecycle and compatible buildpacks). _(REQUIRED)_
+ - **`SOURCE_SUBPATH`**: A subpath within the `source` input where the source to build is located. _(optional, default: "")_
+ - **`PROCESS_TYPE`**: The default process type to set on the image. _(optional, default: "web")_
+ - **`RUN_IMAGE`**: Reference to a run image to use. _(optional, default: "")_
+ - **`CACHE_IMAGE`**: The name of the persistent app cache image (if no cache workspace is provided). _(optional, default: "")_
+ - **`USER_ID`**: The user ID of the builder image user. _(optional, default: "1000")_
+ - **`GROUP_ID`**: The group ID of the builder image user. _(optional, default: "1000")_
+ - **`PLATFORM_DIR`**: The name of the platform directory. _(optional, default: "empty-dir")_
 
-```yaml
-apiVersion: tekton.dev/v1beta1
-kind: TaskRun
-metadata:
-  name: example-run
-spec:
-  taskRef:
-    name: buildpacks-phases
-  podTemplate:
-    volumes:
-# Uncomment the lines below to use an existing cache
-#    - name: my-cache
-#      persistentVolumeClaim:
-#        claimName: my-cache-pvc
-# Uncomment the lines below to provide a platform directory
-#    - name: my-platform-dir
-#      persistentVolumeClaim:
-#        claimName: my-platform-dir-pvc
-  params:
-  - name: SOURCE_SUBPATH
-    value: <optional subpath within your source repo, e.g. "apps/java-maven">
-  - name: BUILDER_IMAGE
-    value: <your builder image tag, see below for suggestions, e.g. "builder-repo/builder-image:builder-tag">
-# Uncomment the lines below to use an existing cache
-#  - name: CACHE
-#    value: my-cache
-# Uncomment the lines below to provide a platform directory
-#  - name: PLATFORM_DIR
-#    value: my-platform-dir
-  resources:
-    outputs:
-    - name: image
-      resourceSpec:
-        type: image
-        params:
-        - name: url
-          value: <your output image tag, e.g. "gcr.io/app-repo/app-image:app-tag">
-  workspaces:
-  - name: source
-    persistentVolumeClaim:
-      claimName: my-source-pvc
-```
+## Builders
 
-### Example builders
-Paketo:
-- `paketobuildpacks/builder:base` &rarr; Ubuntu bionic base image with buildpacks for Java, NodeJS and Golang
-- `paketobuildpacks/builder:tiny` &rarr; Tiny base image (bionic build image, distroless run image) with buildpacks for Golang
-- `paketobuildpacks/builder:full-cf` &rarr; cflinuxfs3 base image with buildpacks for Java, .NET, NodeJS, Golang, PHP, HTTPD and NGINX
-> NOTE: The `paketobuildpacks/builder:full-cf` requires setting the USER_ID and GROUP_ID parameters to 2000, in order to work.
+The following is only a subset of [builders](https://buildpacks.io/docs/concepts/components/builder/) available. These are the suggested builders from the Cloud Native Buildpacks projects.
 
-Heroku:
- - `heroku/buildpacks:18` &rarr; heroku-18 base image with buildpacks for Ruby, Java, Node.js, Python, Golang, & PHP
-
-Google:
- - `gcr.io/buildpacks/builder:v1` &rarr; Ubuntu 18 base image with buildpacks for .NET, Go, Java, Node.js, and Python
+ - **`gcr.io/buildpacks/builder:v1`**: Ubuntu 18 base image with buildpacks for .NET, Go, Java, Node.js, and Python
+ - **`heroku/buildpacks:18`**
+ - **`heroku/buildpacks:20`**
+ - **`paketobuildpacks/builder:base`**: Ubuntu bionic base image with buildpacks for Java, .NET Core, NodeJS, Go, Ruby, NGINX and Procfile
+ - **`paketobuildpacks/builder:full`**: Ubuntu bionic base image with buildpacks for Java, .NET Core, NodeJS, Go, PHP, Ruby, Apache HTTPD, NGINX and Procfile
+ - **`paketobuildpacks/builder:tiny`**: Tiny base image (bionic build image, distroless-like run image) with buildpacks for Java Native Image and Go
 
 ## Previous Versions
 
@@ -113,7 +57,7 @@ For support of previous [Platform API][platform-api]s use a previous version of 
 
 > Be sure to also supply a compatible builder image (`BUILDER_IMAGE` input) when running the task (i.e. one that has a lifecycle that supports the platform API).
 
-| Version        | Platform APIs
+| Version        | Platform API
 |----            |-----
 | [0.1](../0.1/) | [0.3][platform-api-0.3]
 

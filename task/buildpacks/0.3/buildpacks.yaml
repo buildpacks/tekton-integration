@@ -14,11 +14,6 @@ spec:
     The Buildpacks task builds source into a container image and pushes it to a registry,
     using Cloud Native Buildpacks.
 
-    Cloud Native Buildpacks are pluggable, modular tools that transform application source code
-    into OCI images. They replace Dockerfiles in the app development lifecycle, and allow for swift
-    rebasing of images, and give modular control over images through the use of builders, among other
-    benefits. This command uses a builder to construct the image, and pushes it to the registry provided.
-
   params:
     - name: APP_IMAGE
       description: The name of where to store the app image.
