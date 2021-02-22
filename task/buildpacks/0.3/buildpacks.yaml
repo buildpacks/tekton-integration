@@ -20,6 +20,8 @@ spec:
     benefits. This command uses a builder to construct the image, and pushes it to the registry provided.
 
   params:
+    - name: APP_IMAGE
+      description: The name of where to store the app image.
     - name: BUILDER_IMAGE
       description: The image on which builds will run (must include lifecycle and compatible buildpacks).
     - name: SOURCE_SUBPATH
@@ -46,11 +48,6 @@ spec:
     - name: PLATFORM_DIR
       description: The name of the platform directory.
       default: empty-dir
-
-  resources:
-    outputs:
-      - name: app-image
-        type: image
 
   workspaces:
     - name: source
@@ -100,9 +97,9 @@ spec:
         - "-platform=/platform"
         - "-process-type=$(params.PROCESS_TYPE)"
         - "-skip-restore=$(params.SKIP_RESTORE)"
-        - "-previous-image=$(resources.outputs.app-image.url)"
+        - "-previous-image=$(params.APP_IMAGE)"
         - "-run-image=$(params.RUN_IMAGE)"
-        - "$(resources.outputs.app-image.url)"
+        - "$(params.APP_IMAGE)"
       volumeMounts:
         - name: layers-dir
           mountPath: /layers

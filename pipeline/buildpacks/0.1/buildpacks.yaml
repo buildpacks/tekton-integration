@@ -9,29 +9,30 @@ spec:
     - name: cache-ws
       description: Location where cache is stored if CACHE_IMAGE is not provided.
       optional: true
-  resources:
-    - name: source-git
-      type: git
-    - name: app-image
-      type: image
   params:
     - name: BUILDER_IMAGE
       description: The image on which builds will run (must include lifecycle and compatible buildpacks).
     - name: TRUST_BUILDER
       description: Whether the builder image is trusted. When false, each build phase is executed in isolation and credentials are only shared with trusted images.
       default: "false"
+    - name: APP_IMAGE
+      description: The name of where to store the app image.
+    - name: SOURCE_URL
+      description: A git repo url where the source code resides.
+    - name: SOURCE_REFERENCE
+      description: The branch, tag or SHA to checkout.
+      default: ""
     - name: SOURCE_SUBPATH
-      description: A subpath within the `source` where the source to build is located.
+      description: A subpath within checked out source where the source to build is located.
       default: ""
     - name: PROCESS_TYPE
       description: The default process type to set on the image.
       default: "web"
     - name: RUN_IMAGE
-      description: Reference to a run image to use.
+      description: The name of the run image to use (defaults to image specified in builder).
       default: ""
-    # NOTE: CACHE_IMAGE isn't a resource because of issues with optional resource replacements
     - name: CACHE_IMAGE
-      description: The name of the persistent app cache image.
+      description: The name of the persistent cache image.
       default: ""
     - name: USER_ID
       description: The user ID of the builder image user.
@@ -40,38 +41,20 @@ spec:
       description: The group ID of the builder image user.
       default: "1000"
   tasks:
-    - name: copy-source-to-source-ws
-      taskSpec:
-        workspaces:
-          - name: workspace
-        resources:
-          inputs:
-            - name: source-git
-              type: git
-        steps:
-          - name: clone-app-repo-to-workspace
-            image: docker.io/library/bash:5.1.4@sha256:b208215a4655538be652b2769d82e576bc4d0a2bb132144c060efc5be8c3f5d6
-            script: |
-              #!/usr/bin/env bash
-              set -e
-              
-              echo "> Installing rsync..."
-              apk add rsync
-
-              echo "> Syncing source to workspace..."
-              rsync -avr --delete $(resources.inputs.source-git.path)/. $(workspaces.workspace.path)
-
-              echo "> Done!"
+    - name: fetch-from-git
+      taskRef:
+        name: git-clone
+      params:
+        - name: url
+          value: $(params.SOURCE_URL)
+        - name: revision
+          value: $(params.SOURCE_REFERENCE)
       workspaces:
-        - name: workspace
+        - name: output
           workspace: source-ws
-      resources:
-        inputs:
-          - name: source-git
-            resource: source-git
     - name: build-trusted
       runAfter:
-        - copy-source-to-source-ws
+        - fetch-from-git
       taskRef:
         name: buildpacks
       when:
@@ -83,13 +66,11 @@ spec:
           workspace: source-ws
         - name: cache
           workspace: cache-ws
-      resources:
-        outputs:
-          - name: app-image
-            resource: app-image
       params:
         - name: BUILDER_IMAGE
           value: "$(params.BUILDER_IMAGE)"
+        - name: APP_IMAGE
+          value: "$(params.APP_IMAGE)"
         - name: SOURCE_SUBPATH
           value: "$(params.SOURCE_SUBPATH)"
         - name: PROCESS_TYPE
@@ -104,7 +85,7 @@ spec:
           value: "$(params.GROUP_ID)"
     - name: build-untrusted
       runAfter:
-        - copy-source-to-source-ws
+        - fetch-from-git
       taskRef:
         name: buildpacks-phases
       when:
@@ -116,13 +97,11 @@ spec:
           workspace: source-ws
         - name: cache
           workspace: cache-ws
-      resources:
-        outputs:
-          - name: app-image
-            resource: app-image
       params:
         - name: BUILDER_IMAGE
           value: "$(params.BUILDER_IMAGE)"
+        - name: APP_IMAGE
+          value: "$(params.APP_IMAGE)"
         - name: SOURCE_SUBPATH
           value: "$(params.SOURCE_SUBPATH)"
         - name: PROCESS_TYPE

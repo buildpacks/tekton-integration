@@ -24,9 +24,12 @@ IMAGE_NAME="$2"
 # DEPENDENCIES
 
 require_command kubectl
-require_command envsubst
+require_command tkn
 
 # TASK
+
+echo "> Installing dependant tasks..."
+kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/master/task/git-clone/0.2/git-clone.yaml
 
 echo "> Installing tasks..."
 ls -1 task/buildpacks*/*/*.yaml | xargs -I '{}' sh -c 'echo "--> Installing {}..."; kubectl apply -f {}'
@@ -36,3 +39,6 @@ ls -1 pipeline/buildpacks*/*/*.yaml | xargs -I '{}' sh -c 'echo "--> Installing 
 
 echo "> Applying sample ..."
 sed -e "s;<IMAGE_NAME>;${IMAGE_NAME};" $SAMPLE_FILE | kubectl apply -f -
+
+echo "> Tailing logs..."
+tkn pipelinerun logs -f

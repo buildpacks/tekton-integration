@@ -41,11 +41,6 @@ kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/master/task/
 
 * **`SOURCE_SUBPATH`**: A subpath within the `source` input where the source to build is located. (_default:_ `""`)
 
-### Outputs
-
-* **`image`**: An `image`-type `PipelineResource` specifying the image that should
-  be built.
-
 ## Workspaces
 
 The `source` workspace holds the source to build. See `SOURCE_SUBPATH` above if source is located within a subpath of this input.
