@@ -1,4 +1,4 @@
-<!-- NOTE: This file is auto-generated. Do not manually update! -->
+<!-- NOTE: This file is auto-generated. Update via task/buildpacks/0.3/README.tpl.md -->
 # Buildpacks
 
 This task builds source into a container image using [Cloud Native Buildpacks](https://buildpacks.io). To do that, it uses [builders](https://buildpacks.io/docs/concepts/components/builder/#what-is-a-builder) to run buildpacks against your application.

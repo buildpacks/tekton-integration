@@ -9,12 +9,16 @@ metadata:
     tekton.dev/tags: image-build
     tekton.dev/displayName: "Buildpacks"
 spec:
+  description: >-
+    The Buildpacks pipeline builds source from a Git repository into a container image and pushes it to a registry, using Cloud Native Buildpacks.
+
   workspaces:
     - name: source-ws
       description: Location where source is stored.
     - name: cache-ws
       description: Location where cache is stored if CACHE_IMAGE is not provided.
       optional: true
+
   params:
     - name: BUILDER_IMAGE
       description: The image on which builds will run (must include lifecycle and compatible buildpacks).
@@ -46,6 +50,7 @@ spec:
     - name: GROUP_ID
       description: The group ID of the builder image user.
       default: "1000"
+
   tasks:
     - name: fetch-from-git
       taskRef:

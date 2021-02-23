@@ -14,6 +14,13 @@ spec:
     The Buildpacks task builds source into a container image and pushes it to a registry,
     using Cloud Native Buildpacks.
 
+  workspaces:
+    - name: source
+      description: Directory where application source is located.
+    - name: cache
+      description: Directory where cache is stored (when no cache image is provided).
+      optional: true
+
   params:
     - name: APP_IMAGE
       description: The name of where to store the app image.
@@ -43,13 +50,6 @@ spec:
     - name: PLATFORM_DIR
       description: The name of the platform directory.
       default: empty-dir
-
-  workspaces:
-    - name: source
-      description: Directory where application source is located.
-    - name: cache
-      description: Directory where cache is stored (when no cache image is provided).
-      optional: true
 
   stepTemplate:
     env:

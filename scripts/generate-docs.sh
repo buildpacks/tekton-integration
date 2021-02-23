@@ -33,9 +33,10 @@ if [ ! -f "$DEFINITION" ]; then
     echo "${TYPE} definition '$DEFINITION' not found!"
 fi
 
-TEMPLATE="${DIR}/../${TYPE}/${NAME}/${VERSION}/README.tpl.md"
-if [ ! -f "$TEMPLATE" ]; then
-    echo "README template '$TEMPLATE' not found!"
+BASE_TEMPLATE_FILE="${TYPE}/${NAME}/${VERSION}/README.tpl.md"
+TEMPLATE_FILE="${DIR}/../${BASE_TEMPLATE_FILE}"
+if [ ! -f "$TEMPLATE_FILE" ]; then
+    echo "README template '$TEMPLATE_FILE' not found!"
 fi
 
 echo "> Gathering suggested builders..."
@@ -72,7 +73,7 @@ EOF
 
 DOCS_FILE="${DIR}/../${TYPE}/${NAME}/${VERSION}/README.md"
 echo "> Writing docs to: ${DOCS_FILE}"
-echo "<!-- NOTE: This file is auto-generated. Do not manually update! -->" > $DOCS_FILE
-envsubst < "$TEMPLATE" >> "$DOCS_FILE"
+echo "<!-- NOTE: This file is auto-generated. Update via ${BASE_TEMPLATE_FILE} -->" > $DOCS_FILE
+envsubst < "$TEMPLATE_FILE" >> "$DOCS_FILE"
 
 cat "$DOCS_FILE"

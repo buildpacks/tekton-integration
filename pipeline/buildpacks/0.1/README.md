@@ -1,4 +1,4 @@
-<!-- NOTE: This file is auto-generated. Do not manually update! -->
+<!-- NOTE: This file is auto-generated. Update via pipeline/buildpacks/0.1/README.tpl.md -->
 # Buildpacks
 
 This pipeline builds source into a container image using [Cloud Native Buildpacks](https://buildpacks.io). To do that, it uses [builders](https://buildpacks.io/docs/concepts/components/builder/#what-is-a-builder) to run buildpacks against your application.
