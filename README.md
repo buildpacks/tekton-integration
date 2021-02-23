@@ -22,9 +22,9 @@ The purpose of this repository is to provide the means for testing and developin
 [tekton]: https://tekton.dev/
 
 
-## Examples
+## Samples
 
-There are a few examples through out this repo. Most require some bootstraping hence there are two scripts to assist in executing the examples.
+There are a few samples through out this repo. Most require some bootstraping hence there are two scripts to assist in executing the samples.
 
 ##### Prerequisites
 
@@ -35,14 +35,13 @@ There are a few examples through out this repo. Most require some bootstraping h
     - ... learn how to use a [local registry](./DEVELOPMENT.md#docker-registry)
     - ... other registries may require additional [auth configuration][tekton-docker-auth]
 
-
 [tekton-install]: https://github.com/tektoncd/pipeline/blob/master/docs/install.md#installing-tekton-pipelines-on-kubernetes
 [tekton-docker-auth]: https://github.com/tektoncd/pipeline/blob/master/docs/auth.md#configuring-authentication-for-docker
 
 ##### Run
 
 ```
-./scripts/example-run.sh <path/to/sample.yaml> <image-name>
+./scripts/sample-run.sh <path/to/sample.yaml> <image-name>
 ```
 
 Additional options (using `tkn`):
@@ -59,7 +58,7 @@ Additional options (using `tkn`):
 ##### Cleanup
 
 ```
-./scripts/example-cleanup.sh <path/to/sample.yaml>
+./scripts/sample-cleanup.sh <path/to/sample.yaml>
 ```
 
 ## Support
