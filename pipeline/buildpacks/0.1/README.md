@@ -1,7 +1,7 @@
 <!-- NOTE: This file is auto-generated. Update via pipeline/buildpacks/0.1/README.tpl.md -->
 # Buildpacks
 
-This pipeline builds source into a container image using [Cloud Native Buildpacks](https://buildpacks.io). To do that, it uses [builders](https://buildpacks.io/docs/concepts/components/builder/#what-is-a-builder) to run buildpacks against your application.
+This pipeline builds source into a container image using [Cloud Native Buildpacks](https://buildpacks.io). To do that, it uses [builders](https://buildpacks.io/docs/concepts/components/builder/#what-is-a-builder) to run buildpacks against your application source.
 
 > _**What are Cloud Native Buildpacks?**_
 > 
@@ -17,6 +17,8 @@ This pipeline builds source into a container image using [Cloud Native Buildpack
 
 - **Tekton** v0.12.1 and above
 - **[Platform API][platform-api]** 
+
+[platform-api]: https://buildpacks.io/docs/reference/spec/platform-api/
 
 ## Install
 
@@ -54,4 +56,10 @@ The following is only a subset of [builders](https://buildpacks.io/docs/concepts
  - **`paketobuildpacks/builder:full`**: Ubuntu bionic base image with buildpacks for Java, .NET Core, NodeJS, Go, PHP, Ruby, Apache HTTPD, NGINX and Procfile
  - **`paketobuildpacks/builder:tiny`**: Tiny base image (bionic build image, distroless-like run image) with buildpacks for Java Native Image and Go
 
-[platform-api]: https://buildpacks.io/docs/reference/spec/platform-api/
+## Usage
+
+See the following samples for usage:
+
+- **[cache-image](samples/cache-image.yaml)**: A PipelineRun configured to cache build artifacts in an image.
+- **[cache-volume](samples/cache-volume.yaml)**: A PipelineRun configured to cache build artifacts in an volume.
+- **[run-image](samples/run-image.yaml)**: A PipelineRun configured to specify an explicit run image.

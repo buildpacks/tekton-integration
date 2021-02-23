@@ -13,6 +13,8 @@ ${SUMMARY}
 - **Tekton** v${TEKTON_MIN_VERSION} and above
 - **[Platform API][platform-api]** ${PLATFORM_API_VERSION}
 
+[platform-api]: https://buildpacks.io/docs/reference/spec/platform-api/
+
 ## Install
 
 ```
@@ -33,4 +35,10 @@ The following is only a subset of [builders](https://buildpacks.io/docs/concepts
 
 ${BUILDERS}
 
-[platform-api]: https://buildpacks.io/docs/reference/spec/platform-api/
+## Usage
+
+See the following samples for usage:
+
+- **[cache-image](samples/cache-image.yaml)**: A PipelineRun configured to cache build artifacts in an image.
+- **[cache-volume](samples/cache-volume.yaml)**: A PipelineRun configured to cache build artifacts in an volume.
+- **[run-image](samples/run-image.yaml)**: A PipelineRun configured to specify an explicit run image.
