@@ -39,6 +39,7 @@ kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/master/pipel
  - **`SOURCE_URL`**: A git repo url where the source code resides. _(REQUIRED)_
  - **`SOURCE_REFERENCE`**: The branch, tag or SHA to checkout. _(optional, default: "")_
  - **`SOURCE_SUBPATH`**: A subpath within checked out source where the source to build is located. _(optional, default: "")_
+ - **`ENV_VARS`**: Environment variables to set during _build-time_. _(optional, default: [])_
  - **`PROCESS_TYPE`**: The default process type to set on the image. _(optional, default: "web")_
  - **`RUN_IMAGE`**: The name of the run image to use (defaults to image specified in builder). _(optional, default: "")_
  - **`CACHE_IMAGE`**: The name of the persistent cache image. _(optional, default: "")_
@@ -50,8 +51,8 @@ kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/master/pipel
 The following is only a subset of [builders](https://buildpacks.io/docs/concepts/components/builder/) available. These are the suggested builders from the Cloud Native Buildpacks projects.
 
  - **`gcr.io/buildpacks/builder:v1`**: Ubuntu 18 base image with buildpacks for .NET, Go, Java, Node.js, and Python
- - **`heroku/buildpacks:18`**
- - **`heroku/buildpacks:20`**
+ - **`heroku/buildpacks:18`**: Base builder for Heroku-18 stack, based on ubuntu:18.04 base image
+ - **`heroku/buildpacks:20`**: Base builder for Heroku-20 stack, based on ubuntu:20.04 base image
  - **`paketobuildpacks/builder:base`**: Ubuntu bionic base image with buildpacks for Java, .NET Core, NodeJS, Go, Ruby, NGINX and Procfile
  - **`paketobuildpacks/builder:full`**: Ubuntu bionic base image with buildpacks for Java, .NET Core, NodeJS, Go, PHP, Ruby, Apache HTTPD, NGINX and Procfile
  - **`paketobuildpacks/builder:tiny`**: Tiny base image (bionic build image, distroless-like run image) with buildpacks for Java Native Image and Go

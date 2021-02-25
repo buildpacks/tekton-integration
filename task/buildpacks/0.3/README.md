@@ -31,6 +31,7 @@ kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/master/task/
  - **`APP_IMAGE`**: The name of where to store the app image. _(REQUIRED)_
  - **`BUILDER_IMAGE`**: The image on which builds will run (must include lifecycle and compatible buildpacks). _(REQUIRED)_
  - **`SOURCE_SUBPATH`**: A subpath within the `source` input where the source to build is located. _(optional, default: "")_
+ - **`ENV_VARS`**: Environment variables to set during _build-time_. _(optional, default: [])_
  - **`PROCESS_TYPE`**: The default process type to set on the image. _(optional, default: "web")_
  - **`RUN_IMAGE`**: Reference to a run image to use. _(optional, default: "")_
  - **`CACHE_IMAGE`**: The name of the persistent app cache image (if no cache workspace is provided). _(optional, default: "")_
@@ -44,11 +45,18 @@ kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/master/task/
 The following is only a subset of [builders](https://buildpacks.io/docs/concepts/components/builder/) available. These are the suggested builders from the Cloud Native Buildpacks projects.
 
  - **`gcr.io/buildpacks/builder:v1`**: Ubuntu 18 base image with buildpacks for .NET, Go, Java, Node.js, and Python
- - **`heroku/buildpacks:18`**
- - **`heroku/buildpacks:20`**
+ - **`heroku/buildpacks:18`**: Base builder for Heroku-18 stack, based on ubuntu:18.04 base image
+ - **`heroku/buildpacks:20`**: Base builder for Heroku-20 stack, based on ubuntu:20.04 base image
  - **`paketobuildpacks/builder:base`**: Ubuntu bionic base image with buildpacks for Java, .NET Core, NodeJS, Go, Ruby, NGINX and Procfile
  - **`paketobuildpacks/builder:full`**: Ubuntu bionic base image with buildpacks for Java, .NET Core, NodeJS, Go, PHP, Ruby, Apache HTTPD, NGINX and Procfile
  - **`paketobuildpacks/builder:tiny`**: Tiny base image (bionic build image, distroless-like run image) with buildpacks for Java Native Image and Go
+
+
+## Usage
+
+See the following samples for usage:
+
+- **[env-vars](samples/env-vars.yaml)**: A Pipeline configured to provide _build-time_ environment variables.
 
 ## Previous Versions
 

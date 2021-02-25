@@ -35,6 +35,10 @@ spec:
     - name: SOURCE_SUBPATH
       description: A subpath within checked out source where the source to build is located.
       default: ""
+    - name: ENV_VARS
+      type: array
+      description: Environment variables to set during _build-time_.
+      default: []
     - name: PROCESS_TYPE
       description: The default process type to set on the image.
       default: "web"
@@ -86,6 +90,8 @@ spec:
           value: "$(params.SOURCE_SUBPATH)"
         - name: PROCESS_TYPE
           value: "$(params.PROCESS_TYPE)"
+        - name: ENV_VARS
+          value: ["$(params.ENV_VARS)"]
         - name: RUN_IMAGE
           value: "$(params.RUN_IMAGE)"
         - name: CACHE_IMAGE
@@ -115,6 +121,8 @@ spec:
           value: "$(params.APP_IMAGE)"
         - name: SOURCE_SUBPATH
           value: "$(params.SOURCE_SUBPATH)"
+        - name: ENV_VARS
+          value: ["$(params.ENV_VARS)"]
         - name: PROCESS_TYPE
           value: "$(params.PROCESS_TYPE)"
         - name: RUN_IMAGE
