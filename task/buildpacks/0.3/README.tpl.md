@@ -30,6 +30,13 @@ The following is only a subset of [builders](https://buildpacks.io/docs/concepts
 
 ${BUILDERS}
 
+
+## Usage
+
+See the following samples for usage:
+
+- **[env-vars](samples/env-vars.yaml)**: A Pipeline configured to provide _build-time_ environment variables.
+
 ## Previous Versions
 
 For support of previous [Platform API][platform-api]s use a previous version of this task.

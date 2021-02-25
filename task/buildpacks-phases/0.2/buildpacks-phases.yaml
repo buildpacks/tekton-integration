@@ -30,6 +30,10 @@ spec:
     - name: SOURCE_SUBPATH
       description: A subpath within the `source` input where the source to build is located.
       default: ""
+    - name: ENV_VARS
+      type: array
+      description: Environment variables to set during _build-time_.
+      default: []
     - name: PROCESS_TYPE
       description: The default process type to set on the image.
       default: "web"
@@ -60,6 +64,9 @@ spec:
   steps:
     - name: prepare
       image: docker.io/library/bash:5.1.4@sha256:b208215a4655538be652b2769d82e576bc4d0a2bb132144c060efc5be8c3f5d6
+      args:
+        - "--env-vars"
+        - "$(params.ENV_VARS[*])"
       script: |
         #!/usr/bin/env bash
         set -e
@@ -72,10 +79,39 @@ spec:
         for path in "/tekton/home" "/layers" "$(workspaces.source.path)"; do
           echo "> Setting permissions on '$path'..."
           chown -R "$(params.USER_ID):$(params.GROUP_ID)" "$path"
-        done 
+        done
+
+        echo "> Parsing additional configuration..."
+        parsing_flag=""
+        envs=()
+        for arg in "$@"; do
+            if [[ "$arg" == "--env-vars" ]]; then
+                echo "-> Parsing env variables..."
+                parsing_flag="env-vars"
+            elif [[ "$parsing_flag" == "env-vars" ]]; then
+                envs+=("$arg")
+            fi
+        done
+
+        echo "> Processing any environment variables..."
+        ENV_DIR="/platform/env"
+
+        echo "--> Creating 'env' directory: $ENV_DIR"
+        mkdir -p "$ENV_DIR"
+
+        for env in "${envs[@]}"; do
+            IFS='=' read -r key value string <<< "$env"
+            if [[ "$key" != "" && "$value" != "" ]]; then
+                path="${ENV_DIR}/${key}"
+                echo "--> Writing ${path}..."
+                echo -n "$value" > "$path"
+            fi
+        done
       volumeMounts:
         - name: layers-dir
           mountPath: /layers
+        - name: $(params.PLATFORM_DIR)
+          mountPath: /platform
       securityContext:
         privileged: true
 

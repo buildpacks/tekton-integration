@@ -36,6 +36,7 @@ ${BUILDERS}
 
 See the following samples for usage:
 
+- **[env-vars](samples/env-vars.yaml)**: A Pipeline configured to provide _build-time_ environment variables.
 - **[lifecycle-image](samples/lifecycle-image.yaml)**: A Pipeline configured to use a specific image of the lifecycle.
 
 ## Previous Versions
