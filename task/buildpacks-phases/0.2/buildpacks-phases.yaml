@@ -48,6 +48,9 @@ spec:
     - name: PLATFORM_DIR
       description: The name of the platform directory.
       default: empty-dir
+    - name: LIFECYCLE_IMAGE
+      description: The image to use when executing sensitive phases.
+      default: docker.io/buildpacksio/lifecycle:0.10.2@sha256:1bf8d3fc41d2fdf0ee4abdad50038ab8902ef58c74f5bcfc432c26767d889ed0
 
   stepTemplate:
     env:
@@ -106,7 +109,7 @@ spec:
           mountPath: /tekton/home
 
     - name: analyze
-      image: docker.io/buildpacksio/lifecycle:0.10.2@sha256:1bf8d3fc41d2fdf0ee4abdad50038ab8902ef58c74f5bcfc432c26767d889ed0
+      image: $(params.LIFECYCLE_IMAGE)
       imagePullPolicy: Always
       command: ["/cnb/lifecycle/analyzer"]
       args:
@@ -122,7 +125,7 @@ spec:
           mountPath: /layers
 
     - name: restore
-      image: docker.io/buildpacksio/lifecycle:0.10.2@sha256:1bf8d3fc41d2fdf0ee4abdad50038ab8902ef58c74f5bcfc432c26767d889ed0
+      image: $(params.LIFECYCLE_IMAGE)
       imagePullPolicy: Always
       command: ["/cnb/lifecycle/restorer"]
       args:
@@ -154,7 +157,7 @@ spec:
           mountPath: /tekton/home
 
     - name: export
-      image: docker.io/buildpacksio/lifecycle:0.10.2@sha256:1bf8d3fc41d2fdf0ee4abdad50038ab8902ef58c74f5bcfc432c26767d889ed0
+      image: $(params.LIFECYCLE_IMAGE)
       imagePullPolicy: Always
       command: ["/cnb/lifecycle/exporter"]
       args:

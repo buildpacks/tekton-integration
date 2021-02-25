@@ -1,7 +1,7 @@
 <!-- NOTE: This file is auto-generated. Update via task/buildpacks-phases/0.2/README.tpl.md -->
 # Buildpacks (phases)
 
-This task builds source into a container image using [Cloud Native Buildpacks](https://buildpacks.io). To do that, it uses [builders](https://buildpacks.io/docs/concepts/components/builder/#what-is-a-builder) to run buildpacks against your application.
+This task builds source into a container image using [Cloud Native Buildpacks](https://buildpacks.io). To do that, it uses [builders](https://buildpacks.io/docs/concepts/components/builder/#what-is-a-builder) to run buildpacks against your application source.
 
 > _**What are Cloud Native Buildpacks?**_
 > 
@@ -39,6 +39,7 @@ kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/master/task/
  - **`USER_ID`**: The user ID of the builder image user. _(optional, default: "1000")_
  - **`GROUP_ID`**: The group ID of the builder image user. _(optional, default: "1000")_
  - **`PLATFORM_DIR`**: The name of the platform directory. _(optional, default: "empty-dir")_
+ - **`LIFECYCLE_IMAGE`**: The image to use when executing sensitive phases. _(optional, default: "docker.io/buildpacksio/lifecycle:0.10.2@sha256:1bf8d3fc41d2fdf0ee4abdad50038ab8902ef58c74f5bcfc432c26767d889ed0")_
 
 ## Builders
 
@@ -50,6 +51,12 @@ The following is only a subset of [builders](https://buildpacks.io/docs/concepts
  - **`paketobuildpacks/builder:base`**: Ubuntu bionic base image with buildpacks for Java, .NET Core, NodeJS, Go, Ruby, NGINX and Procfile
  - **`paketobuildpacks/builder:full`**: Ubuntu bionic base image with buildpacks for Java, .NET Core, NodeJS, Go, PHP, Ruby, Apache HTTPD, NGINX and Procfile
  - **`paketobuildpacks/builder:tiny`**: Tiny base image (bionic build image, distroless-like run image) with buildpacks for Java Native Image and Go
+
+## Usage
+
+See the following samples for usage:
+
+- **[lifecycle-image](samples/lifecycle-image.yaml)**: A Pipeline configured to use a specific image of the lifecycle.
 
 ## Previous Versions
 

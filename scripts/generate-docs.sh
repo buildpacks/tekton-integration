@@ -63,7 +63,7 @@ export DISPLAY_NAME=$(cat "$DEFINITION" | yj | jq -r '.metadata.annotations["tek
 export PLATFORM_API_VERSION=$(cat "$DEFINITION" | yj | jq -r '.spec.stepTemplate.env[] | select ( .name | contains("CNB_PLATFORM_API")) | .value')
 
 export SUMMARY=$(cat <<EOF
-This $TYPE builds source into a container image using [Cloud Native Buildpacks](https://buildpacks.io). To do that, it uses [builders](https://buildpacks.io/docs/concepts/components/builder/#what-is-a-builder) to run buildpacks against your application.
+This $TYPE builds source into a container image using [Cloud Native Buildpacks](https://buildpacks.io). To do that, it uses [builders](https://buildpacks.io/docs/concepts/components/builder/#what-is-a-builder) to run buildpacks against your application source.
 
 > _**What are Cloud Native Buildpacks?**_
 > 
