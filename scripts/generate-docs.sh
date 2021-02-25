@@ -55,7 +55,7 @@ echo "> Extracting workspaces..."
 export WORKSPACES=$(cat "$DEFINITION" | yj | jq -r '.spec.workspaces[] | . + {"note": (if .optional then "_(optional)_" else "_(REQUIRED)_" end) } | " - **`\(.name)`**: \(.description) \(.note)"')
 
 echo "> Extracting parameters..."
-export PARAMETERS=$(cat "$DEFINITION" | yj | jq -r '.spec.params[] | . + {"note": (if .default then "_(optional, default: \"\(.default)\")_" else "_(REQUIRED)_" end) } | " - **`\(.name)`**: \(.description) \(.note)"')
+export PARAMETERS=$(cat "$DEFINITION" | yj | jq -r '.spec.params[] | . + {"default": (if .default and .type != "array" then "\"\(.default)\"" else .default end) } | . + {"note": (if .default then "_(optional, default: \(.default))_" else "_(REQUIRED)_" end) } | " - **`\(.name)`**: \(.description) \(.note)"')
 
 echo "> Extracting metadata..."
 export TEKTON_MIN_VERSION=$(cat "$DEFINITION" | yj | jq -r '.metadata.annotations["tekton.dev/pipelines.minVersion"]')

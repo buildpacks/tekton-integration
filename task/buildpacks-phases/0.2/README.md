@@ -33,7 +33,7 @@ kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/master/task/
  - **`APP_IMAGE`**: The name of where to store the app image. _(REQUIRED)_
  - **`BUILDER_IMAGE`**: The image on which builds will run (must include lifecycle and compatible buildpacks). _(REQUIRED)_
  - **`SOURCE_SUBPATH`**: A subpath within the `source` input where the source to build is located. _(optional, default: "")_
- - **`ENV_VARS`**: Environment variables to set during _build-time_. _(optional, default: "[]")_
+ - **`ENV_VARS`**: Environment variables to set during _build-time_. _(optional, default: [])_
  - **`PROCESS_TYPE`**: The default process type to set on the image. _(optional, default: "web")_
  - **`RUN_IMAGE`**: Reference to a run image to use. _(optional, default: "")_
  - **`CACHE_IMAGE`**: The name of the persistent app cache image (if no cache workspace is provided). _(optional, default: "")_
