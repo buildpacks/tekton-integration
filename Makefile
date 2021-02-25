@@ -19,7 +19,7 @@ test-openshift:
 .PHONY: generate-docs
 generate-docs:
 	@find pipeline -type d | grep -e '[a-z\-]\+/[0-9]\+\.[0-9]\+$$' | xargs -I '{}' sh -c 'echo "\n\n>> Docs for {}...\n"; ./scripts/generate-docs.sh {}'
-	@find pipeline -type d | grep -e '[a-z\-]\+/[0-9]\+\.[0-9]\+$$' | xargs -I '{}' sh -c 'echo "\n\n>> Docs for {}...\n"; ./scripts/generate-docs.sh {}'
+	@find task -type d | grep -e '[a-z\-]\+/[0-9]\+\.[0-9]\+$$' | xargs -I '{}' sh -c 'echo "\n\n>> Docs for {}...\n"; ./scripts/generate-docs.sh {}'
 
 .PHONY: diff
 diff:

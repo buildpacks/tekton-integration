@@ -32,6 +32,12 @@ The following is only a subset of [builders](https://buildpacks.io/docs/concepts
 
 ${BUILDERS}
 
+## Usage
+
+See the following samples for usage:
+
+- **[lifecycle-image](samples/lifecycle-image.yaml)**: A Pipeline configured to use a specific image of the lifecycle.
+
 ## Previous Versions
 
 For support of previous [Platform API][platform-api]s use a previous version of this task.
