@@ -9,12 +9,12 @@ This task builds source into a container image using [Cloud Native Buildpacks](h
 
 The lifecycle phases are run in separate containers to enable better security for untrusted builders. Specifically, registry credentials are hidden from the detect and build phases of the lifecycle, and the analyze, restore, and export phases (which require credentials) are run in the lifecycle image published by the [Cloud Native Buildpacks project]( https://hub.docker.com/u/buildpacksio).
 
-See also [`buildpacks`](../buildpacks) for the combined version of this task, which uses the [creator binary](https://github.com/buildpacks/spec/blob/platform/0.3/platform.md#operations), to run all of the [lifecycle phases](https://buildpacks.io/docs/concepts/components/lifecycle/#phases). This task, in contrast, runs all of the phases separately.
+See also [`buildpacks`](../buildpacks) for the combined version of this task, which uses the [creator binary](https://github.com/buildpacks/spec/blob/platform/0.4/platform.md#operations), to run all of the [lifecycle phases](https://buildpacks.io/docs/concepts/components/lifecycle/#phases). This task, in contrast, runs all of the phases separately.
 
 ## Compatibility
 
 - **Tekton** v0.12.1 and above
-- **[Platform API][platform-api]** 0.3
+- **[Platform API][platform-api]** 0.4
     - For other versions, see [previous versions](#previous-versions).
 
 ## Install
