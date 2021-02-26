@@ -40,6 +40,10 @@ kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/master/task/
  - **`GROUP_ID`**: The group ID of the builder image user. _(optional, default: "1000")_
  - **`PLATFORM_DIR`**: The name of the platform directory. _(optional, default: "empty-dir")_
 
+## Results
+
+ - **`APP_IMAGE_DIGEST`**: The digest of the built `APP_IMAGE`.
+
 ## Builders
 
 The following is only a subset of [builders](https://buildpacks.io/docs/concepts/components/builder/) available. These are the suggested builders from the Cloud Native Buildpacks projects.
