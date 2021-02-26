@@ -57,6 +57,9 @@ export WORKSPACES=$(cat "$DEFINITION" | yj | jq -r '.spec.workspaces[] | . + {"n
 echo "> Extracting parameters..."
 export PARAMETERS=$(cat "$DEFINITION" | yj | jq -r '.spec.params[] | . + {"default": (if .default and .type != "array" then "\"\(.default)\"" else .default end) } | . + {"note": (if .default then "_(optional, default: \(.default))_" else "_(REQUIRED)_" end) } | " - **`\(.name)`**: \(.description) \(.note)"')
 
+echo "> Extracting results..."
+export RESULTS=$(cat "$DEFINITION" | yj | jq -r '.spec.results[] | " - **`\(.name)`**: \(.description)"')
+
 echo "> Extracting metadata..."
 export TEKTON_MIN_VERSION=$(cat "$DEFINITION" | yj | jq -r '.metadata.annotations["tekton.dev/pipelines.minVersion"]')
 export DISPLAY_NAME=$(cat "$DEFINITION" | yj | jq -r '.metadata.annotations["tekton.dev/displayName"]')
