@@ -59,7 +59,7 @@ spec:
   stepTemplate:
     env:
       - name: CNB_PLATFORM_API
-        value: "0.3"
+        value: "0.4"
 
   steps:
     - name: prepare

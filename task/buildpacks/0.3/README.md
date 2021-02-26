@@ -7,12 +7,12 @@ This task builds source into a container image using [Cloud Native Buildpacks](h
 > 
 > _Cloud Native Buildpacks are pluggable, modular tools that transform application source code into OCI images. They replace Dockerfiles in the app development lifecycle, and enable for swift rebasing of images and modular control over images (through the use of builders), among other benefits._
 
-See also [`buildpacks-phases`](../buildpacks-phases) for the deconstructed version of this task, which runs each of the [lifecycle phases](https://buildpacks.io/docs/concepts/components/lifecycle/#phases) individually. This task uses the [creator binary](https://github.com/buildpacks/spec/blob/platform/0.3/platform.md#operations), which coordinates and runs all of the phases.
+See also [`buildpacks-phases`](../buildpacks-phases) for the deconstructed version of this task, which runs each of the [lifecycle phases](https://buildpacks.io/docs/concepts/components/lifecycle/#phases) individually. This task uses the [creator binary](https://github.com/buildpacks/spec/blob/platform/0.4/platform.md#operations), which coordinates and runs all of the phases.
 
 ## Compatibility
 
 - **Tekton** v0.12.1 and above
-- **[Platform API][platform-api]** 0.3
+- **[Platform API][platform-api]** 0.4
     - For other versions, see [previous versions](#previous-versions).
 
 ## Install
