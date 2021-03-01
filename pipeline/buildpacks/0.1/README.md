@@ -16,7 +16,7 @@ This pipeline builds source into a container image using [Cloud Native Buildpack
 ## Compatibility
 
 - **Tekton** v0.12.1 and above
-- **[Platform API][platform-api]** 
+- **[Platform API][platform-api]** 0.4
 
 [platform-api]: https://buildpacks.io/docs/reference/spec/platform-api/
 
