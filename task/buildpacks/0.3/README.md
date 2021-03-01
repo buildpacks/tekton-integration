@@ -18,7 +18,7 @@ See also [`buildpacks-phases`](../buildpacks-phases) for the deconstructed versi
 ## Install
 
 ```
-kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildpacks/0.3/buildpacks.yaml
+kubectl apply -f https://raw.githubusercontent.com/buildpacks/tekton-integration/main/task/buildpacks/0.3/buildpacks.yaml
 ```
 
 ## Workspaces

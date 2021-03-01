@@ -15,7 +15,7 @@ See also [`buildpacks`](../buildpacks) for the combined version of this task, wh
 ## Install
 
 ```
-kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/master/${TYPE}/${NAME}/${VERSION}/${NAME}.yaml
+kubectl apply -f https://raw.githubusercontent.com/buildpacks/tekton-integration/main/${TYPE}/${NAME}/${VERSION}/${NAME}.yaml
 ```
 
 ## Workspaces

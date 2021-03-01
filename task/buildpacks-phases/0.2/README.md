@@ -20,7 +20,7 @@ See also [`buildpacks`](../buildpacks) for the combined version of this task, wh
 ## Install
 
 ```
-kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildpacks-phases/0.2/buildpacks-phases.yaml
+kubectl apply -f https://raw.githubusercontent.com/buildpacks/tekton-integration/main/task/buildpacks-phases/0.2/buildpacks-phases.yaml
 ```
 
 ## Workspaces
