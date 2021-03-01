@@ -13,6 +13,8 @@ apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
   name: cache-volume-pipelinerun
+  labels:
+    app.kubernetes.io/description: A PipelineRun configured to cache build artifacts in an volume.
 spec:
   pipelineRef:
     name: buildpacks

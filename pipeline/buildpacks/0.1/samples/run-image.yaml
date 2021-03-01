@@ -13,6 +13,8 @@ apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
   name: run-image-pipelinerun
+  labels:
+    app.kubernetes.io/description: A PipelineRun configured to specify an explicit run image.
 spec:
   pipelineRef:
     name: buildpacks

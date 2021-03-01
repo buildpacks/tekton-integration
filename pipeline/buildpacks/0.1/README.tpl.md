@@ -31,14 +31,16 @@ ${PARAMETERS}
 
 ## Builders
 
-The following is only a subset of [builders](https://buildpacks.io/docs/concepts/components/builder/) available. These are the suggested builders from the Cloud Native Buildpacks projects.
-
 ${BUILDERS}
 
 ## Usage
 
-See the following samples for usage:
+${SAMPLES}
 
-- **[cache-image](samples/cache-image.yaml)**: A PipelineRun configured to cache build artifacts in an image.
-- **[cache-volume](samples/cache-volume.yaml)**: A PipelineRun configured to cache build artifacts in an volume.
-- **[run-image](samples/run-image.yaml)**: A PipelineRun configured to specify an explicit run image.
+## Support
+
+${SUPPORT}
+
+## Contributing
+
+${CONTRIBUTING}
