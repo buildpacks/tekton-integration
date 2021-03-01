@@ -23,7 +23,7 @@ This pipeline builds source into a container image using [Cloud Native Buildpack
 ## Install
 
 ```
-kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/master/pipeline/buildpacks/0.1/buildpacks.yaml
+kubectl apply -f https://raw.githubusercontent.com/buildpacks/tekton-integration/main/pipeline/buildpacks/0.1/buildpacks.yaml
 ```
 
 ## Workspaces
