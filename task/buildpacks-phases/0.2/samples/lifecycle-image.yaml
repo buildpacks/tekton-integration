@@ -1,3 +1,4 @@
+---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -62,4 +63,3 @@ spec:
       subPath: cache
       persistentVolumeClaim:
         claimName: lifecycle-image-ws-pvc
----

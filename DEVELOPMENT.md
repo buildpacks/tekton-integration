@@ -4,6 +4,7 @@
 #### Dependencies
 
 - [catlin](https://github.com/tektoncd/plumbing/tree/master/catlin)
+- [yamllint](https://yamllint.readthedocs.io/en/stable/)
 
 #### Usage
 
