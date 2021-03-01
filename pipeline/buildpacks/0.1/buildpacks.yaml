@@ -1,3 +1,4 @@
+---
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
@@ -23,7 +24,9 @@ spec:
     - name: BUILDER_IMAGE
       description: The image on which builds will run (must include lifecycle and compatible buildpacks).
     - name: TRUST_BUILDER
-      description: Whether the builder image is trusted. When false, each build phase is executed in isolation and credentials are only shared with trusted images.
+      description: >-
+        Whether the builder image is trusted.
+        When false, each build phase is executed in isolation and credentials are only shared with trusted images.
       default: "false"
     - name: APP_IMAGE
       description: The name of where to store the app image.
@@ -75,7 +78,7 @@ spec:
       when:
         - input: "$(params.TRUST_BUILDER)"
           operator: in
-          values: [ "true", "yes", "TRUE", "True" ]
+          values: ["true", "yes", "TRUE", "True"]
       workspaces:
         - name: source
           workspace: source-ws
@@ -108,7 +111,7 @@ spec:
       when:
         - input: "$(params.TRUST_BUILDER)"
           operator: notin
-          values: [ "true", "yes", "TRUE", "True" ]
+          values: ["true", "yes", "TRUE", "True"]
       workspaces:
         - name: source
           workspace: source-ws
@@ -133,4 +136,3 @@ spec:
           value: "$(params.USER_ID)"
         - name: GROUP_ID
           value: "$(params.GROUP_ID)"
----
