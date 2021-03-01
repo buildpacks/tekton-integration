@@ -28,16 +28,19 @@ ${PARAMETERS}
 
 ## Builders
 
-The following is only a subset of [builders](https://buildpacks.io/docs/concepts/components/builder/) available. These are the suggested builders from the Cloud Native Buildpacks projects.
-
 ${BUILDERS}
 
 ## Usage
 
-See the following samples for usage:
+${SAMPLES}
 
-- **[env-vars](samples/env-vars.yaml)**: A Pipeline configured to provide _build-time_ environment variables.
-- **[lifecycle-image](samples/lifecycle-image.yaml)**: A Pipeline configured to use a specific image of the lifecycle.
+## Support
+
+${SUPPORT}
+
+## Contributing
+
+${CONTRIBUTING}
 
 ## Previous Versions
 

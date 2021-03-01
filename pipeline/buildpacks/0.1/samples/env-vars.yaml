@@ -13,6 +13,8 @@ apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
   name: env-var-pipelinerun
+  labels:
+    app.kubernetes.io/description: A PipelineRun configured to provide _build-time_ environment variables.
 spec:
   pipelineRef:
     name: buildpacks

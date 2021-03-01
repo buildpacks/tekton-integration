@@ -67,13 +67,12 @@ The [Buildpacks Community](http://buildpacks.io/community/) is always here to he
 
 We can be found in our [discussion board][discussion-board] or [slack][slack] (`#tekton`).
 
+[discussion-board]: https://github.com/buildpacks/community/discussions
+[slack]: https://slack.buildpacks.io
+
 ## Contributing
 
 We ❤ contributions.
 
 - [CONTRIBUTING](https://github.com/buildpacks/.github/blob/main/CONTRIBUTING.md) - Learn what's necessary to start contributing.
 - [DEVELOPMENT](DEVELOPMENT.md) - Get details to help you during development within this specific repo.
-
-
-[discussion-board]: https://github.com/buildpacks/community/discussions
-[slack]: https://slack.buildpacks.io

@@ -13,6 +13,8 @@ apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
   name: lifecycle-image-pipeline-run
+  labels:
+    app.kubernetes.io/description: A PipelineRun configured to use a specific lifecycle image.
 spec:
   pipelineSpec:
     workspaces:

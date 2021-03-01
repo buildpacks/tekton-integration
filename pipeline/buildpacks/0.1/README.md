@@ -48,7 +48,7 @@ kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/master/pipel
 
 ## Builders
 
-The following is only a subset of [builders](https://buildpacks.io/docs/concepts/components/builder/) available. These are the suggested builders from the Cloud Native Buildpacks projects.
+_The following are the suggested [builders][builders] from the [Cloud Native Buildpacks][buildpacks-io] project. This is only a subset of builders available._
 
  - **`gcr.io/buildpacks/builder:v1`**: Ubuntu 18 base image with buildpacks for .NET, Go, Java, Node.js, and Python
  - **`heroku/buildpacks:18`**: Base builder for Heroku-18 stack, based on ubuntu:18.04 base image
@@ -57,10 +57,34 @@ The following is only a subset of [builders](https://buildpacks.io/docs/concepts
  - **`paketobuildpacks/builder:full`**: Ubuntu bionic base image with buildpacks for Java, .NET Core, NodeJS, Go, PHP, Ruby, Apache HTTPD, NGINX and Procfile
  - **`paketobuildpacks/builder:tiny`**: Tiny base image (bionic build image, distroless-like run image) with buildpacks for Java Native Image and Go
 
+[builders]: (https://buildpacks.io/docs/concepts/components/builder/)
+[buildpacks-io]: (https://buildpacks.io)
+
 ## Usage
 
 See the following samples for usage:
 
-- **[cache-image](samples/cache-image.yaml)**: A PipelineRun configured to cache build artifacts in an image.
-- **[cache-volume](samples/cache-volume.yaml)**: A PipelineRun configured to cache build artifacts in an volume.
-- **[run-image](samples/run-image.yaml)**: A PipelineRun configured to specify an explicit run image.
+ - **[`cache-image.yaml`](samples/cache-image.yaml)**: A PipelineRun configured to cache build artifacts in an image.
+ - **[`cache-volume.yaml`](samples/cache-volume.yaml)**: A PipelineRun configured to cache build artifacts in an volume.
+ - **[`env-vars.yaml`](samples/env-vars.yaml)**: A PipelineRun configured to provide _build-time_ environment variables.
+ - **[`run-image.yaml`](samples/run-image.yaml)**: A PipelineRun configured to specify an explicit run image.
+
+## Support
+
+The [Buildpacks Community](http://buildpacks.io/community/) is always here to help. 
+
+We can be found in our [discussion board][discussion-board] or [slack][slack] (`#tekton`).
+
+[discussion-board]: https://github.com/buildpacks/community/discussions
+[slack]: https://slack.buildpacks.io
+
+## Contributing
+
+We ❤ contributions.
+
+This pipeline is maintained at [buildpacks/tekton-integration](https://github.com/buildpacks/tekton-integration). Issues, pull requests and other contributions can be made there. 
+
+To learn more, read the [CONTRIBUTING][contributing] and [DEVELOPMENT][development] documents.
+
+[contributing]: https://github.com/buildpacks/.github/blob/main/CONTRIBUTING.md
+[development]: https://github.com/buildpacks/tekton-integration/blob/main/DEVELOPMENT.md
