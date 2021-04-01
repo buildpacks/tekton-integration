@@ -9,20 +9,30 @@ This pipeline builds source into a container image using [Cloud Native Buildpack
 
 ## Dependencies
 
-- [`git-clone` task](https://github.com/tektoncd/catalog/tree/master/task/git-clone) 0.2 or newer
-- [`buildpacks` task](../../../task/buildpacks/) 0.3 or newer
-- [`buildpacks-phases` task](../../../task/buildpacks-phases/) 0.2 or newer
+- [`git-clone` task](https://github.com/tektoncd/catalog/tree/master/task/git-clone) 0.3 or newer
+- [`buildpacks` task](https://github.com/buildpacks/tekton-integration/tree/main/task/buildpacks/) 0.3 or newer
+- [`buildpacks-phases` task](https://github.com/buildpacks/tekton-integration/tree/main/task/buildpacks-phases/) 0.2 or newer
 
 ## Compatibility
 
-- **Tekton** v0.12.1 and above
+- **Tekton** v0.17.0 and above
 - **[Platform API][platform-api]** 0.4
 
 [platform-api]: https://buildpacks.io/docs/reference/spec/platform-api/
 
 ## Install
 
+#### Install dependencies (if missing)
+
+```shell
+kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/git-clone/0.3/git-clone.yaml
+kubectl apply -f https://raw.githubusercontent.com/buildpacks/tekton-integration/main/task/buildpacks/0.3/buildpacks.yaml
+kubectl apply -f https://raw.githubusercontent.com/buildpacks/tekton-integration/main/task/buildpacks-phases/0.2/buildpacks-phases.yaml
 ```
+
+#### Install pipeline
+
+```shell
 kubectl apply -f https://raw.githubusercontent.com/buildpacks/tekton-integration/main/pipeline/buildpacks/0.1/buildpacks.yaml
 ```
 
@@ -65,7 +75,7 @@ _The following are the suggested [builders][builders] from the [Cloud Native Bui
 See the following samples for usage:
 
  - **[`cache-image.yaml`](samples/cache-image.yaml)**: A PipelineRun configured to cache build artifacts in an image.
- - **[`cache-volume.yaml`](samples/cache-volume.yaml)**: A PipelineRun configured to cache build artifacts in an volume.
+ - **[`cache-volume.yaml`](samples/cache-volume.yaml)**: A PipelineRun configured to cache build artifacts in a volume.
  - **[`env-vars.yaml`](samples/env-vars.yaml)**: A PipelineRun configured to provide _build-time_ environment variables.
  - **[`run-image.yaml`](samples/run-image.yaml)**: A PipelineRun configured to specify an explicit run image.
 

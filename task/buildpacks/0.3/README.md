@@ -11,7 +11,7 @@ See also [`buildpacks-phases`](../../buildpacks-phases) for the deconstructed ve
 
 ## Compatibility
 
-- **Tekton** v0.12.1 and above
+- **Tekton** v0.17.0 and above
 - **[Platform API][platform-api]** 0.4
     - For other versions, see [previous versions](#previous-versions).
 
