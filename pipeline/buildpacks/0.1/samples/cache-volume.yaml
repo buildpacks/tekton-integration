@@ -15,7 +15,7 @@ kind: PipelineRun
 metadata:
   name: cache-volume-pipelinerun
   labels:
-    app.kubernetes.io/description: A PipelineRun configured to cache build artifacts in an volume.
+    app.kubernetes.io/description: A PipelineRun configured to cache build artifacts in a volume.
 spec:
   pipelineRef:
     name: buildpacks

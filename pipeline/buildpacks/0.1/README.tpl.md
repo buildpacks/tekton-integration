@@ -4,7 +4,7 @@ ${SUMMARY}
 
 ## Dependencies
 
-- [`git-clone` task](https://github.com/tektoncd/catalog/tree/master/task/git-clone) 0.2 or newer
+- [`git-clone` task](https://github.com/tektoncd/catalog/tree/master/task/git-clone) 0.3 or newer
 - [`buildpacks` task](https://github.com/buildpacks/tekton-integration/tree/main/task/buildpacks/) 0.3 or newer
 - [`buildpacks-phases` task](https://github.com/buildpacks/tekton-integration/tree/main/task/buildpacks-phases/) 0.2 or newer
 
@@ -17,7 +17,17 @@ ${SUMMARY}
 
 ## Install
 
+#### Install dependencies (if missing)
+
+```shell
+kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/git-clone/0.3/git-clone.yaml
+kubectl apply -f https://raw.githubusercontent.com/buildpacks/tekton-integration/main/task/buildpacks/0.3/buildpacks.yaml
+kubectl apply -f https://raw.githubusercontent.com/buildpacks/tekton-integration/main/task/buildpacks-phases/0.2/buildpacks-phases.yaml
 ```
+
+#### Install pipeline
+
+```shell
 kubectl apply -f https://raw.githubusercontent.com/buildpacks/tekton-integration/main/${TYPE}/${NAME}/${VERSION}/${NAME}.yaml
 ```
 

@@ -40,8 +40,8 @@ cp -R "$RESOURCE_DIR"/* "$DESTINATION_DIR"
 echo "> Updating some content..."
 
 echo "--> Update resource URL in README.md..."
-sed -i "" 's;buildpacks/tekton-integration/main;tektoncd/catalog/master;g' "${DESTINATION_DIR}/README.md"
-sed -i "" 's;buildpacks/tekton-integration/tree/main;tektoncd/catalog/tree/master;g' "${DESTINATION_DIR}/README.md"
+sed -i "" 's;buildpacks/tekton-integration/main;tektoncd/catalog/main;g' "${DESTINATION_DIR}/README.md"
+sed -i "" 's;buildpacks/tekton-integration/tree/main;tektoncd/catalog/tree/main;g' "${DESTINATION_DIR}/README.md"
 
 echo "> Cleaning up..."
 
