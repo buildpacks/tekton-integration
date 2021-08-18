@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: cache-volume-ws-pvc
+  name: buildpacks-ws-pvc
 spec:
   accessModes:
     - ReadWriteOnce
@@ -13,7 +13,7 @@ spec:
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  name: cache-volume-pipelinerun
+  name: buildpacks-pipelinerun
   labels:
     app.kubernetes.io/description: A PipelineRun configured to cache build artifacts in a volume.
 spec:
@@ -25,7 +25,7 @@ spec:
     - name: TRUST_BUILDER
       value: "false"
     - name: APP_IMAGE
-      value: <IMAGE_NAME>
+      value: localhost:5000/buildpacks-app
     - name: SOURCE_URL
       value: https://github.com/buildpacks/samples
     - name: SOURCE_SUBPATH
@@ -34,8 +34,8 @@ spec:
     - name: source-ws
       subPath: source
       persistentVolumeClaim:
-        claimName: cache-volume-ws-pvc
+        claimName: buildpacks-ws-pvc
     - name: cache-ws
       subPath: cache
       persistentVolumeClaim:
-        claimName: cache-volume-ws-pvc
+        claimName: buildpacks-ws-pvc

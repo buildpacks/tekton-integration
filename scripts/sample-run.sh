@@ -17,6 +17,7 @@ fi
 SAMPLE_FILE="$1"
 if [ ! -f "$SAMPLE_FILE" ]; then
     echo "File '$SAMPLE_FILE' not found!"
+    exit 1
 fi
 
 IMAGE_NAME="$2"
