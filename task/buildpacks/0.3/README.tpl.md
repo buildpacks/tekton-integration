@@ -32,6 +32,10 @@ ${RESULTS}
 
 ${BUILDERS}
 
+## Platforms
+
+The Task can be run on `linux/amd64` platform.
+
 ## Usage
 
 ${SAMPLES}
