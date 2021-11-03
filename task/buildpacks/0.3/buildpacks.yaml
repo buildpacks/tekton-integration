@@ -6,9 +6,11 @@ metadata:
   labels:
     app.kubernetes.io/version: "0.3"
   annotations:
+    tekton.dev/categories: Image Build
     tekton.dev/pipelines.minVersion: "0.17.0"
     tekton.dev/tags: image-build
     tekton.dev/displayName: "Buildpacks"
+    tekton.dev/platforms: "linux/amd64"
 spec:
   description: >-
     The Buildpacks task builds source into a container image and pushes it to a registry,
