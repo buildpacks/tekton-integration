@@ -13,7 +13,7 @@ function env_or_default() {
     fi
 }
 
-function get_tasks_to_test() {
+function get_tasks() {
     if [ ! -z "${TASKS}" ]; then
         parts=(${TASKS//;/ })
         echo "${parts[@]}"
@@ -24,6 +24,20 @@ function get_tasks_to_test() {
             tasks+=("${parts[-2]}:${parts[-1]}")
         done
         echo "${tasks[@]}"
+    fi
+}
+
+function get_pipelines() {
+    if [ ! -z "${PIPELINES}" ]; then
+        parts=(${PIPELINES//;/ })
+        echo "${parts[@]}"
+    else
+        pipelines=()
+        for t in $(find ${1} -mindepth 2 -maxdepth 2 -type d); do
+            parts=(${t//\// })
+            pipelines+=("${parts[-2]}:${parts[-1]}")
+        done
+        echo "${pipelines[@]}"
     fi
 }
 
