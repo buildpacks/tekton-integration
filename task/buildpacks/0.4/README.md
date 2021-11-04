@@ -1,9 +1,10 @@
+<!-- NOTE: This file is auto-generated. Update via task/buildpacks/0.4/README.tpl.md -->
 # Buildpacks
 
 This task builds source into a container image using [Cloud Native Buildpacks](https://buildpacks.io). To do that, it uses [builders](https://buildpacks.io/docs/concepts/components/builder/#what-is-a-builder) to run buildpacks against your application source.
 
 > _**What are Cloud Native Buildpacks?**_
->
+> 
 > _Cloud Native Buildpacks are pluggable, modular tools that transform application source code into OCI images. They replace Dockerfiles in the app development lifecycle, and enable for swift rebasing of images and modular control over images (through the use of builders), among other benefits._
 
 See also [`buildpacks-phases`](../../buildpacks-phases) for the deconstructed version of this task, which runs each of the [lifecycle phases](https://buildpacks.io/docs/concepts/components/lifecycle/#phases) individually. This task uses the [creator binary](https://github.com/buildpacks/spec/blob/platform/0.4/platform.md#operations), which coordinates and runs all of the phases.
@@ -17,7 +18,7 @@ See also [`buildpacks-phases`](../../buildpacks-phases) for the deconstructed ve
 ## Install
 
 ```
-kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildpacks/0.4/buildpacks.yaml
+kubectl apply -f https://raw.githubusercontent.com/buildpacks/tekton-integration/main/task/buildpacks/0.4/buildpacks.yaml
 ```
 
 ## Workspaces
@@ -51,8 +52,8 @@ _The following are the suggested [builders][builders] from the [Cloud Native Bui
  - **`gcr.io/buildpacks/builder:v1`**: Ubuntu 18 base image with buildpacks for .NET, Go, Java, Node.js, and Python
  - **`heroku/buildpacks:18`**: Base builder for Heroku-18 stack, based on ubuntu:18.04 base image
  - **`heroku/buildpacks:20`**: Base builder for Heroku-20 stack, based on ubuntu:20.04 base image
- - **`paketobuildpacks/builder:base`**: Ubuntu bionic base image with buildpacks for Java, .NET Core, NodeJS, Go, Ruby, NGINX and Procfile
- - **`paketobuildpacks/builder:full`**: Ubuntu bionic base image with buildpacks for Java, .NET Core, NodeJS, Go, PHP, Ruby, Apache HTTPD, NGINX and Procfile
+ - **`paketobuildpacks/builder:base`**: Ubuntu bionic base image with buildpacks for Java, .NET Core, NodeJS, Go, Python, Ruby, NGINX and Procfile
+ - **`paketobuildpacks/builder:full`**: Ubuntu bionic base image with buildpacks for Java, .NET Core, NodeJS, Go, Python, PHP, Ruby, Apache HTTPD, NGINX and Procfile
  - **`paketobuildpacks/builder:tiny`**: Tiny base image (bionic build image, distroless-like run image) with buildpacks for Java Native Image and Go
 
 [builders]: (https://buildpacks.io/docs/concepts/components/builder/)
@@ -71,7 +72,7 @@ See the following samples for usage:
 
 ## Support
 
-The [Buildpacks Community](http://buildpacks.io/community/) is always here to help.
+The [Buildpacks Community](http://buildpacks.io/community/) is always here to help. 
 
 We can be found in our [discussion board][discussion-board] or [slack][slack] (`#tekton`).
 
@@ -82,7 +83,7 @@ We can be found in our [discussion board][discussion-board] or [slack][slack] (`
 
 We ❤ contributions.
 
-This task is maintained at [buildpacks/tekton-integration](https://github.com/buildpacks/tekton-integration). Issues, pull requests and other contributions can be made there.
+This task is maintained at [buildpacks/tekton-integration](https://github.com/buildpacks/tekton-integration). Issues, pull requests and other contributions can be made there. 
 
 To learn more, read the [CONTRIBUTING][contributing] and [DEVELOPMENT][development] documents.
 
