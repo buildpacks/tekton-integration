@@ -22,4 +22,22 @@ $KUBECTLCMD apply --filename https://storage.googleapis.com/tekton-releases/pipe
 
 echo "> Waiting for pods to be ready..."
 sleep 15
-$KUBECTLCMD wait --for=condition=ready -n tekton-pipelines pods --timeout=120s --all
+
+# disable error propogation
+set +e
+
+$KUBECTLCMD wait --for=condition=ready -n tekton-pipelines pods --timeout=300s --all
+wait_rc="${?}"
+
+# re-enable error propogation
+set -e
+
+if [ "${wait_rc}" -ne 0 ]; then
+    echo "Failed to start pods..."
+    echo "Current pod status: "
+    $KUBECTLCMD get -n tekton-pipelines pods
+
+    # Write an informative error message and halt the script with an `exit 1`, or
+    # perhaps let it continue onwards, depending on what you're doing.
+    exit 1
+fi
