@@ -26,7 +26,7 @@ sleep 15
 # disable error propogation
 set +e
 
-$KUBECTLCMD wait --for=condition=ready -n tekton-pipelines pods --timeout=120s --all
+$KUBECTLCMD wait --for=condition=ready -n tekton-pipelines pods --timeout=300s --all
 wait_rc="${?}"
 
 # re-enable error propogation
