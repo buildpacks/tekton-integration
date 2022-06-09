@@ -4,10 +4,10 @@ kind: Pipeline
 metadata:
   name: buildpacks
   labels:
-    app.kubernetes.io/version: "0.1"
+    app.kubernetes.io/version: "0.2"
   annotations:
     tekton.dev/categories: Image Build
-    tekton.dev/pipelines.minVersion: "0.17.0"
+    tekton.dev/pipelines.minVersion: "0.36.0"
     tekton.dev/tags: image-build
     tekton.dev/displayName: "Buildpacks"
     tekton.dev/platforms: "linux/amd64"
@@ -91,20 +91,6 @@ spec:
           value: "$(params.BUILDER_IMAGE)"
         - name: APP_IMAGE
           value: "$(params.APP_IMAGE)"
-        - name: SOURCE_SUBPATH
-          value: "$(params.SOURCE_SUBPATH)"
-        - name: PROCESS_TYPE
-          value: "$(params.PROCESS_TYPE)"
-        - name: ENV_VARS
-          value: ["$(params.ENV_VARS)"]
-        - name: RUN_IMAGE
-          value: "$(params.RUN_IMAGE)"
-        - name: CACHE_IMAGE
-          value: "$(params.CACHE_IMAGE)"
-        - name: USER_ID
-          value: "$(params.USER_ID)"
-        - name: GROUP_ID
-          value: "$(params.GROUP_ID)"
     - name: build-untrusted
       runAfter:
         - fetch-from-git
@@ -124,17 +110,3 @@ spec:
           value: "$(params.BUILDER_IMAGE)"
         - name: APP_IMAGE
           value: "$(params.APP_IMAGE)"
-        - name: SOURCE_SUBPATH
-          value: "$(params.SOURCE_SUBPATH)"
-        - name: ENV_VARS
-          value: ["$(params.ENV_VARS)"]
-        - name: PROCESS_TYPE
-          value: "$(params.PROCESS_TYPE)"
-        - name: RUN_IMAGE
-          value: "$(params.RUN_IMAGE)"
-        - name: CACHE_IMAGE
-          value: "$(params.CACHE_IMAGE)"
-        - name: USER_ID
-          value: "$(params.USER_ID)"
-        - name: GROUP_ID
-          value: "$(params.GROUP_ID)"
