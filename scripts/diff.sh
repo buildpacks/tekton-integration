@@ -8,8 +8,8 @@ DIR="$(dirname "${BASH_SOURCE[0]}")"
 source "${DIR}/_common.sh"
 
 # CONFIGURATION
-
-DIFFCMD=$(env_or_default DIFFCMD "git diff --no-index")
+ 
+DIFFCMD=$(env_or_default DIFFCMD "git diff --no-index --diff-filter=RM")
 
 # DEPENDENCIES
 
@@ -31,7 +31,9 @@ function diff_resources() {
 
         new_resource_dir="${resources_dir}/${parts[0]}/${parts[1]}"
         echo "> Diffing $type '${parts[0]}/${parts[1]}'..."
+        echo "---> new: ${new_resource_dir}"
         old_resource_dir=$(find "${tmp_dir}/${type}/${parts[0]}" -maxdepth 1 -type d | sort | tail -1)
+        echo "---> old: ${old_resource_dir}"
         $DIFFCMD "${old_resource_dir}" "${new_resource_dir}" || true
         echo
         echo

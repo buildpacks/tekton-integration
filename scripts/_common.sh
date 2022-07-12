@@ -21,7 +21,7 @@ function get_tasks() {
         tasks=()
         for t in $(find ${1} -mindepth 2 -maxdepth 2 -type d); do
             parts=(${t//\// })
-            tasks+=("${parts[-2]}:${parts[-1]}")
+            tasks+=("${parts[${#parts[@]}-2]}:${parts[${#parts[@]}-1]}")
         done
         echo "${tasks[@]}"
     fi
@@ -35,7 +35,7 @@ function get_pipelines() {
         pipelines=()
         for t in $(find ${1} -mindepth 2 -maxdepth 2 -type d); do
             parts=(${t//\// })
-            pipelines+=("${parts[-2]}:${parts[-1]}")
+            pipelines+=("${parts[${#parts[@]}-2]}:${parts[${#parts[@]}-1]}")
         done
         echo "${pipelines[@]}"
     fi
