@@ -1,3 +1,41 @@
+## Samples
+
+Samples require some bootstraping hence there are two scripts to assist in executing the samples.
+
+##### Prerequisites
+
+- `kubectl`
+    - ... with configured context
+- [Tekton Pipelines][tekton-install]
+- Docker Registry
+    - ... learn how to use a [local registry](./DEVELOPMENT.md#docker-registry)
+    - ... other registries may require additional [auth configuration][tekton-docker-auth]
+
+[tekton-install]: https://github.com/tektoncd/pipeline/blob/master/docs/install.md#installing-tekton-pipelines-on-kubernetes
+[tekton-docker-auth]: https://github.com/tektoncd/pipeline/blob/master/docs/auth.md#configuring-authentication-for-docker
+
+##### Run
+
+```
+./scripts/sample-run.sh <path/to/sample.yaml> <image-name>
+```
+
+Additional options (using `tkn`):
+
+- To rerun a pipeline with the same parameters:
+    ```
+    tkn pipeline start buildpacks --last --showlog
+    ```
+- To rerun a pipeline while overriding last paramters (ie. `TRUST_BUILDER`):
+    ```
+    tkn pipeline start buildpacks --last --showlog  -p TRUST_BUILDER=false
+    ```
+
+##### Cleanup
+
+```
+./scripts/sample-cleanup.sh <path/to/sample.yaml>
+```
 
 ## Linting
 
