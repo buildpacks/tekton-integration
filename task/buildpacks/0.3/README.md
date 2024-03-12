@@ -49,8 +49,8 @@ kubectl apply -f https://raw.githubusercontent.com/buildpacks/tekton-integration
 _The following are the suggested [builders][builders] from the [Cloud Native Buildpacks][buildpacks-io] project. This is only a subset of builders available._
 
  - **`gcr.io/buildpacks/builder:v1`**: Ubuntu 18 base image with buildpacks for .NET, Go, Java, Node.js, and Python
- - **`heroku/buildpacks:18`**: Base builder for Heroku-18 stack, based on ubuntu:18.04 base image
- - **`heroku/buildpacks:20`**: Base builder for Heroku-20 stack, based on ubuntu:20.04 base image
+ - **`heroku/builder:20`**: Heroku-20 (Ubuntu 20.04) base image with buildpacks for Go, Java, Node.js, PHP, Python, Ruby & Scala
+ - **`heroku/builder:22`**: Heroku-22 (Ubuntu 22.04) base image with buildpacks for Go, Java, Node.js, PHP, Python, Ruby & Scala
  - **`paketobuildpacks/builder:base`**: Ubuntu bionic base image with buildpacks for Java, .NET Core, NodeJS, Go, Python, Ruby, NGINX and Procfile
  - **`paketobuildpacks/builder:full`**: Ubuntu bionic base image with buildpacks for Java, .NET Core, NodeJS, Go, Python, PHP, Ruby, Apache HTTPD, NGINX and Procfile
  - **`paketobuildpacks/builder:tiny`**: Tiny base image (bionic build image, distroless-like run image) with buildpacks for Java Native Image and Go

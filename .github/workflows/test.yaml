@@ -12,7 +12,7 @@ on:
 jobs:
   lint:
     name: Lint
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -37,7 +37,7 @@ jobs:
           make lint
   test-kind:
     name: Kind
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
       - uses: engineerd/setup-kind@v0.5.0
